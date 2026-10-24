@@ -6,7 +6,7 @@ use App\Models\EquipmentModel;
 
 class EquipmentController extends BaseController
 {
-    protected $helpers = ['url'];
+    protected $helpers = ['url', 'equipment'];
 
     // List all equipment with category names
     public function index()
