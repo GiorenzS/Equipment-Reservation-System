@@ -10,21 +10,17 @@ class AuthController extends BaseController
 {
     protected $helpers = ['form', 'url'];
 
-    /**
-     * Display the registration page.
-     */
+    // Display the registration page.
     public function register()
     {
-        if (session()->get('is_logged_in')) {
+        if (session()->get('isLoggedIn') || session()->get('is_logged_in')) {
             return redirect()->to('/');
         }
 
         return view('auth/register');
     }
 
-    /**
-     * Process registration request.
-     */
+    // Process registration request.
     public function registerPost()
     {
         $rules = [
@@ -96,21 +92,17 @@ class AuthController extends BaseController
         }
     }
 
-    /**
-     * Display the login page.
-     */
+    // Display the login page.
     public function login()
     {
-        if (session()->get('is_logged_in')) {
+        if (session()->get('isLoggedIn') || session()->get('is_logged_in')) {
             return redirect()->to('/');
         }
 
         return view('auth/login');
     }
 
-    /**
-     * Process login request.
-     */
+    // Process login request.
     public function loginPost()
     {
         $rules = [
@@ -146,6 +138,7 @@ class AuthController extends BaseController
             'email'        => $profile['email'] ?? '',
             'department'   => $profile['department'] ?? '',
             'is_logged_in' => true,
+            'isLoggedIn'   => true,
         ]);
 
         $displayName = ! empty($profile['first_name']) ? $profile['first_name'] : $user['id_number'];
@@ -153,9 +146,7 @@ class AuthController extends BaseController
         return redirect()->to('/')->with('success', "Welcome back, {$displayName}!");
     }
 
-    /**
-     * Log out user and invalidate session.
-     */
+    // Log out user and invalidate session.
     public function logout()
     {
         session()->destroy();
