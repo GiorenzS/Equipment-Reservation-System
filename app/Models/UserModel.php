@@ -25,7 +25,7 @@ class UserModel extends Model
     protected $validationRules = [
         'id_number' => 'required|min_length[3]|max_length[50]|is_unique[users.id_number,user_id,{user_id}]',
         'password'  => 'required|min_length[8]',
-        'role'      => 'permit_empty|in_list[ADMIN,STUDENT]',
+        'role'      => 'permit_empty|in_list[ADMIN,STAFF,STUDENT]',
     ];
 
     protected $validationMessages = [

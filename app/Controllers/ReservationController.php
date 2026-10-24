@@ -7,7 +7,7 @@ use App\Models\ReservationModel;
 
 class ReservationController extends BaseController
 {
-    protected $helpers = ['form', 'url'];
+    protected $helpers = ['form', 'url', 'equipment'];
 
     // List all reservations for the authenticated user
     public function index()
@@ -17,7 +17,7 @@ class ReservationController extends BaseController
         $reservationModel = new ReservationModel();
 
         $reservations = $reservationModel
-            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code')
+            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code, equipment.image')
             ->join('equipment', 'equipment.equipment_id = reservations.equipment_id', 'left')
             ->where('reservations.user_id', $userId)
             ->orderBy('reservations.reservation_id', 'DESC')

@@ -55,9 +55,11 @@
 
         <div class="card p-4 p-md-5">
             <!-- Equipment Summary Header -->
-            <div class="d-flex align-items-start gap-3 p-3 bg-light rounded mb-4">
-                <div class="p-3 bg-white rounded shadow-sm text-primary fs-3">
-                    <i class="bi bi-box-seam"></i>
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded mb-4 border">
+                <div class="equipment-thumb-container shadow-sm" style="width: 60px; height: 60px; min-width: 60px; border-radius: 0.5rem; overflow: hidden; background: #0f172a; border: 1px solid #e2e8f0;">
+                    <img src="<?= esc(equipment_image_url($equipment['image'] ?? null)) ?>"
+                         alt="<?= esc($equipment['equipment_name']) ?>"
+                         style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div>
                     <h5 class="fw-bold mb-1 text-dark"><?= esc($equipment['equipment_name']) ?></h5>
