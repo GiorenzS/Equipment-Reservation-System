@@ -39,14 +39,21 @@ class TestModels extends BaseCommand
         // 2. EquipmentModel — insert + read
         CLI::write('2) EquipmentModel', 'green');
         $eq = new EquipmentModel();
+        $testImage = 'projector-' . time() . '.jpg';
         $eqId = $eq->insert([
             'equipment_code' => '_TEST_' . time(),
             'equipment_name' => 'Test Equipment',
             'category_id'    => $catId,
+            'image'          => $testImage,
         ]);
         CLI::write("   Inserted equipment ID: {$eqId}");
         $row = $eq->find($eqId);
         CLI::write("   Status default: {$row['status']}");
+        $hasImage = isset($row['image']) && $row['image'] === $testImage;
+        CLI::write("   Image persisted: " . ($hasImage ? 'YES ✓' : 'NO ✗'));
+        if (! $hasImage) {
+            CLI::error("FAIL: Equipment image was not saved into database.");
+        }
 
         // 3. UserModel — insert + verify password hash
         CLI::write('3) UserModel', 'green');
