@@ -12,7 +12,7 @@ class UserModel extends Model
     protected $returnType       = 'array';
 
     protected $allowedFields = [
-        'username',
+        'id_number',
         'password',
         'role',
     ];
@@ -23,14 +23,14 @@ class UserModel extends Model
     protected $deletedField  = '';
 
     protected $validationRules = [
-        'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username,user_id,{user_id}]',
-        'password' => 'required|min_length[8]',
-        'role'     => 'permit_empty|in_list[ADMIN,STUDENT]',
+        'id_number' => 'required|min_length[3]|max_length[50]|is_unique[users.id_number,user_id,{user_id}]',
+        'password'  => 'required|min_length[8]',
+        'role'      => 'permit_empty|in_list[ADMIN,STUDENT]',
     ];
 
     protected $validationMessages = [
-        'username' => [
-            'is_unique' => 'This username is already taken.',
+        'id_number' => [
+            'is_unique' => 'This ID number is already taken.',
         ],
     ];
 

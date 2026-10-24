@@ -8,6 +8,7 @@ use App\Models\UserModel;
 use App\Models\EquipmentModel;
 use App\Models\CategoryModel;
 use App\Models\ReservationModel;
+use App\Models\UserProfileModel;
 
 /**
  * Quick smoke test for all 4 models. Delete after verifying.
@@ -52,9 +53,9 @@ class TestModels extends BaseCommand
         $user = new UserModel();
         $plainPassword = 'testpassword123';
         $userId = $user->insert([
-            'username' => '_test_user_' . time(),
-            'password' => $plainPassword,
-            'role'     => 'STUDENT',
+            'id_number' => '_test_id_' . time(),
+            'password'  => $plainPassword,
+            'role'      => 'STUDENT',
         ]);
         CLI::write("   Inserted user ID: {$userId}");
         $row = $user->find($userId);
@@ -82,9 +83,24 @@ class TestModels extends BaseCommand
         $available2 = $res->checkAvailability($eqId, '2026-12-25', '13:00', '15:00');
         CLI::write("   No-overlap 13:00-15:00: " . ($available2 ? 'AVAILABLE ✓' : 'CONFLICT (unexpected)'));
 
-        // 5. Cleanup
+        // 5. UserProfileModel — create + read + update
+        CLI::write('5) UserProfileModel', 'green');
+        $profile = new UserProfileModel();
+        $profId = $profile->createProfile($userId, 'Test', 'User', 'testuser@example.com', '09123456789', 'CCS');
+        CLI::write("   Created profile ID: {$profId}");
+
+        $pRow = $profile->getProfileByUserId($userId);
+        CLI::write("   Read back email: {$pRow['email']}");
+
+        $updated = $profile->updateProfile($userId, ['department' => 'Engineering']);
+        CLI::write("   Updated department: " . ($updated ? 'YES ✓' : 'NO ✗'));
+        $pRowUpdated = $profile->getProfileByUserId($userId);
+        CLI::write("   New department: {$pRowUpdated['department']}");
+
+        // 6. Cleanup
         CLI::newLine();
         CLI::write('Cleaning up test data...', 'yellow');
+        $profile->where('user_id', $userId)->delete();
         $res->delete($resId);
         $eq->delete($eqId);
         $cat->delete($catId);
