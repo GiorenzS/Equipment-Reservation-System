@@ -19,4 +19,9 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     // Equipment routes
     $routes->get('equipment', 'EquipmentController::index');
     $routes->get('equipment/(:num)', 'EquipmentController::show/$1');
+
+    // Reservation routes
+    $routes->get('reservations', 'ReservationController::index');
+    $routes->get('reservations/create/(:num)', 'ReservationController::create/$1');
+    $routes->post('reservations/store', 'ReservationController::store');
 });

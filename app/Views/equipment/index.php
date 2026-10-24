@@ -43,6 +43,11 @@
                             <i class="bi bi-tools me-1"></i> Equipment
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('reservations') ?>">
+                            <i class="bi bi-calendar-check me-1"></i> My Reservations
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3 text-light">
                     <span class="small">

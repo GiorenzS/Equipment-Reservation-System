@@ -116,9 +116,9 @@
                     <i class="bi bi-arrow-left me-1"></i> Back
                 </a>
                 <?php if (strtoupper($item['status'] ?? '') === 'AVAILABLE'): ?>
-                    <button class="btn btn-primary" onclick="alert('Reservation flow will be linked next!')">
+                    <a href="<?= base_url('reservations/create/' . $item['equipment_id']) ?>" class="btn btn-primary">
                         <i class="bi bi-calendar-plus me-1"></i> Reserve This Item
-                    </button>
+                    </a>
                 <?php else: ?>
                     <button class="btn btn-secondary" disabled>
                         Item Currently Unavailable
