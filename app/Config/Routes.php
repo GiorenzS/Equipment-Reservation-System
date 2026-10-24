@@ -15,4 +15,8 @@ $routes->get('logout', 'AuthController::logout');
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('/', 'Home::index');
     $routes->get('dashboard', 'Home::index');
+
+    // Equipment routes
+    $routes->get('equipment', 'EquipmentController::index');
+    $routes->get('equipment/(:num)', 'EquipmentController::show/$1');
 });
