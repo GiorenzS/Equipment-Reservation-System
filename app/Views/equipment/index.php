@@ -24,6 +24,24 @@
             padding: 0.85rem 1rem;
             vertical-align: middle;
         }
+        .equipment-thumbnail {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            background: #0f172a;
+            border: 1px solid #e2e8f0;
+            display: block;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .equipment-thumb-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+        .equipment-thumb-link:hover .equipment-thumbnail {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
     </style>
 </head>
 <body>
@@ -93,6 +111,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-muted small text-uppercase">
                         <tr>
+                            <th scope="col" style="width: 64px;">Photo</th>
                             <th scope="col">Code</th>
                             <th scope="col">Equipment Name</th>
                             <th scope="col">Category</th>
@@ -105,7 +124,7 @@
                     <tbody>
                         <?php if (empty($equipment)): ?>
                             <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
+                                <td colspan="8" class="text-center py-5 text-muted">
                                     <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
                                     No equipment records found.
                                 </td>
@@ -113,6 +132,13 @@
                         <?php else: ?>
                             <?php foreach ($equipment as $item): ?>
                                 <tr>
+                                    <td>
+                                        <a href="<?= base_url('equipment/' . $item['equipment_id']) ?>" class="equipment-thumb-link" title="View details">
+                                            <img src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
+                                                 alt="<?= esc($item['equipment_name']) ?>"
+                                                 class="equipment-thumbnail shadow-sm">
+                                        </a>
+                                    </td>
                                     <td>
                                         <span class="badge bg-light text-dark border font-monospace">
                                             <?= esc($item['equipment_code']) ?>
