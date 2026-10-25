@@ -162,15 +162,20 @@
                 </div>
 
                 <div class="col-sm-6">
-                    <label for="department" class="form-label small fw-semibold">Department / College</label>
-                    <input type="text"
-                           class="form-control <?= isset($errors['department']) ? 'is-invalid' : '' ?>"
-                           id="department"
-                           name="department"
-                           placeholder="e.g. CCS / Engineering"
-                           value="<?= old('department') ?>">
-                    <?php if (isset($errors['department'])): ?>
-                        <div class="invalid-feedback"><?= esc($errors['department']) ?></div>
+                    <label for="department_id" class="form-label small fw-semibold">Department / College <span class="text-danger">*</span></label>
+                    <select class="form-select <?= isset($errors['department_id']) ? 'is-invalid' : '' ?>"
+                            id="department_id"
+                            name="department_id"
+                            required>
+                        <option value="">Select a department</option>
+                        <?php foreach (($departments ?? []) as $department): ?>
+                            <option value="<?= esc($department['department_id']) ?>" <?= (string) old('department_id') === (string) $department['department_id'] ? 'selected' : '' ?>>
+                                <?= esc($department['department_name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (isset($errors['department_id'])): ?>
+                        <div class="invalid-feedback"><?= esc($errors['department_id']) ?></div>
                     <?php endif; ?>
                 </div>
             </div>

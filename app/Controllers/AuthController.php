@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\UserProfileModel;
+use App\Models\DepartmentModel;
 use Config\Database;
 
 class AuthController extends BaseController
@@ -17,7 +18,13 @@ class AuthController extends BaseController
             return redirect()->to('/');
         }
 
-        return view('auth/register');
+        $departments = (new DepartmentModel())
+            ->orderBy('department_name', 'ASC')
+            ->findAll();
+
+        return view('auth/register', [
+            'departments' => $departments,
+        ]);
     }
 
     // Process registration request.
@@ -31,7 +38,7 @@ class AuthController extends BaseController
             'last_name'        => 'required|max_length[50]',
             'email'            => 'required|valid_email|max_length[255]|is_unique[user_profiles.email]',
             'contact_number'   => 'permit_empty|max_length[20]',
-            'department'       => 'permit_empty|max_length[100]',
+            'department_id'    => 'required|integer|is_not_unique[departments.department_id]',
             'role'             => 'permit_empty|in_list[ADMIN,STAFF,STUDENT]',
         ];
 
@@ -44,6 +51,9 @@ class AuthController extends BaseController
             ],
             'password_confirm' => [
                 'matches' => 'The password confirmation does not match.',
+            ],
+            'department_id' => [
+                'is_not_unique' => 'Please select a valid department.',
             ],
         ];
 
@@ -64,6 +74,7 @@ class AuthController extends BaseController
                 'id_number' => $this->request->getPost('id_number'),
                 'password'  => $this->request->getPost('password'),
                 'role'      => $role,
+                'department_id' => (int) $this->request->getPost('department_id'),
             ]);
 
             if (! $userId) {
@@ -75,8 +86,7 @@ class AuthController extends BaseController
                 (string) $this->request->getPost('first_name'),
                 (string) $this->request->getPost('last_name'),
                 (string) $this->request->getPost('email'),
-                $this->request->getPost('contact_number') ?: null,
-                $this->request->getPost('department') ?: null
+                $this->request->getPost('contact_number') ?: null
             );
 
             if (! $profileCreated) {
@@ -126,6 +136,9 @@ class AuthController extends BaseController
 
         $userProfileModel = new UserProfileModel();
         $profile          = $userProfileModel->getProfileByUserId((int) $user['user_id']);
+        $department       = ! empty($user['department_id'])
+            ? (new DepartmentModel())->find((int) $user['department_id'])
+            : null;
 
         session()->regenerate();
         session()->set([
@@ -136,7 +149,8 @@ class AuthController extends BaseController
             'last_name'    => $profile['last_name'] ?? '',
             'full_name'    => trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? '')),
             'email'        => $profile['email'] ?? '',
-            'department'   => $profile['department'] ?? '',
+            'department_id' => isset($user['department_id']) ? (int) $user['department_id'] : null,
+            'department'   => $department['department_name'] ?? '',
             'is_logged_in' => true,
             'isLoggedIn'   => true,
         ]);
