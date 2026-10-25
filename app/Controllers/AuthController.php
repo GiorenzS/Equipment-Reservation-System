@@ -39,7 +39,7 @@ class AuthController extends BaseController
             'email'            => 'required|valid_email|max_length[255]|is_unique[user_profiles.email]',
             'contact_number'   => 'permit_empty|max_length[20]',
             'department_id'    => 'required|integer|is_not_unique[departments.department_id]',
-            'role'             => 'permit_empty|in_list[ADMIN,STAFF,STUDENT]',
+            'role'             => 'permit_empty|in_list[STAFF,STUDENT]',
         ];
 
         $messages = [
@@ -157,7 +157,9 @@ class AuthController extends BaseController
 
         $displayName = ! empty($profile['first_name']) ? $profile['first_name'] : $user['id_number'];
 
-        return redirect()->to('/')->with('success', "Welcome back, {$displayName}!");
+        $redirectTo = strtoupper($user['role']) === 'ADMIN' ? 'admin/reservations' : '/';
+
+        return redirect()->to($redirectTo)->with('success', "Welcome back, {$displayName}!");
     }
 
     // Log out user and invalidate session.

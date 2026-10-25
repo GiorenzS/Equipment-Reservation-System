@@ -17,7 +17,6 @@ class UserProfileModel extends Model
         'last_name',
         'email',
         'contact_number',
-        'department',
     ];
 
     protected $useTimestamps = false;
@@ -28,11 +27,10 @@ class UserProfileModel extends Model
         'last_name'      => 'required|max_length[50]',
         'email'          => 'required|valid_email|max_length[255]',
         'contact_number' => 'permit_empty|max_length[20]',
-        'department'     => 'permit_empty|max_length[100]',
     ];
 
     // Create a profile linked to a user
-    public function createProfile(int $userId, string $firstName, string $lastName, string $email, ?string $contactNumber = null, ?string $department = null): int|bool
+    public function createProfile(int $userId, string $firstName, string $lastName, string $email, ?string $contactNumber = null): int|bool
     {
         return $this->insert([
             'user_id'        => $userId,
@@ -40,7 +38,6 @@ class UserProfileModel extends Model
             'last_name'      => $lastName,
             'email'          => $email,
             'contact_number' => $contactNumber,
-            'department'     => $department,
         ]);
     }
 

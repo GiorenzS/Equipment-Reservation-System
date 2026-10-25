@@ -93,16 +93,11 @@ class TestModels extends BaseCommand
         // 5. UserProfileModel — create + read + update
         CLI::write('5) UserProfileModel', 'green');
         $profile = new UserProfileModel();
-        $profId = $profile->createProfile($userId, 'Test', 'User', 'testuser@example.com', '09123456789', 'CCS');
+        $profId = $profile->createProfile($userId, 'Test', 'User', 'testuser@example.com', '09123456789');
         CLI::write("   Created profile ID: {$profId}");
 
         $pRow = $profile->getProfileByUserId($userId);
         CLI::write("   Read back email: {$pRow['email']}");
-
-        $updated = $profile->updateProfile($userId, ['department' => 'Engineering']);
-        CLI::write("   Updated department: " . ($updated ? 'YES ✓' : 'NO ✗'));
-        $pRowUpdated = $profile->getProfileByUserId($userId);
-        CLI::write("   New department: {$pRowUpdated['department']}");
 
         // 6. Cleanup
         CLI::newLine();

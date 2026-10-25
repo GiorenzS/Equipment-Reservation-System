@@ -24,4 +24,11 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('reservations', 'ReservationController::index');
     $routes->get('reservations/create/(:num)', 'ReservationController::create/$1');
     $routes->post('reservations/store', 'ReservationController::store');
+
+    $routes->group('admin', ['filter' => 'admin'], static function ($routes) {
+        $routes->get('reservations', 'AdminController::index');
+        $routes->post('reservations/(:num)/status/(:segment)', 'AdminController::updateReservationStatus/$1/$2');
+        $routes->post('reservations/(:num)/checkout', 'AdminController::checkout/$1');
+        $routes->post('transactions/(:num)/return', 'AdminController::returnItem/$1');
+    });
 });
