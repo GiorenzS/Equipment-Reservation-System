@@ -51,22 +51,37 @@
                 <input type="search" placeholder="Search equipment, reservations, or activities..." aria-label="Search dashboard" data-global-search>
             </label>
 
-            <form class="dashboard-department-form" method="get" action="<?= base_url('dashboard') ?>">
-                <i class="bi bi-building" aria-hidden="true"></i>
-                <select name="department_id" aria-label="Select department" onchange="this.form.submit()">
+            <div class="dropdown dashboard-department-dropdown">
+                <button class="dashboard-profile dashboard-department-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Choose department">
+                    <i class="bi bi-building" aria-hidden="true"></i>
+                    <span class="dashboard-department-name">
+                        <?php
+                            $selectedDepartmentName = 'Select Department';
+                            foreach ($departmentList as $department) {
+                                if ((int) $department['department_id'] === (int) $selectedDepartmentId) {
+                                    $selectedDepartmentName = $department['department_name'];
+                                    break;
+                                }
+                            }
+                        ?>
+                        <?= esc($selectedDepartmentName) ?>
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dashboard-profile-menu dashboard-department-menu">
                     <?php if (empty($departmentList)): ?>
-                        <option value="">No department available</option>
+                        <li><span class="dropdown-item-text">No departments available</span></li>
                     <?php else: ?>
                         <?php foreach ($departmentList as $department): ?>
-                            <option value="<?= esc($department['department_id']) ?>"
-                                <?= (int) $selectedDepartmentId === (int) $department['department_id'] ? 'selected' : '' ?>>
-                                <?= esc($department['department_name']) ?>
-                            </option>
+                            <li>
+                                <a class="dropdown-item <?= (int) $selectedDepartmentId === (int) $department['department_id'] ? 'active' : '' ?>"
+                                   href="<?= base_url('dashboard?department_id=' . (int) $department['department_id']) ?>">
+                                    <?= esc($department['department_name']) ?>
+                                </a>
+                            </li>
                         <?php endforeach; ?>
                     <?php endif; ?>
-                </select>
-                <i class="bi bi-chevron-down dashboard-select-chevron" aria-hidden="true"></i>
-            </form>
+                </ul>
+            </div>
 
             <div class="dropdown">
                 <button class="dashboard-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

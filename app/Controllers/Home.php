@@ -17,25 +17,12 @@ class Home extends BaseController
         $userId  = (int) $session->get('user_id');
         $db      = db_connect();
 
-        $departmentList = $db->table('user_departments')
-            ->select('departments.department_id, departments.department_name')
-            ->join('departments', 'departments.department_id = user_departments.department_id')
-            ->where('user_departments.user_id', $userId)
-            ->orderBy('departments.department_name', 'ASC')
-            ->get()
-            ->getResultArray();
+        // The dashboard picker lets users browse inventory across all departments.
+        $departmentList = (new DepartmentModel())
+            ->orderBy('department_name', 'ASC')
+            ->findAll();
 
-        // Include the user's assigned department even when it is not yet linked
-        // through user_departments, so it can be the initial dashboard selection.
         $assignedDepartmentId = (int) $session->get('department_id');
-        if ($assignedDepartmentId > 0 && ! in_array($assignedDepartmentId, array_map('intval', array_column($departmentList, 'department_id')), true)) {
-            $assignedDepartment = (new DepartmentModel())->find($assignedDepartmentId);
-            if ($assignedDepartment) {
-                $departmentList[] = $assignedDepartment;
-            }
-        }
-
-        usort($departmentList, static fn ($left, $right) => strcmp($left['department_name'], $right['department_name']));
 
         $allowedDepartmentIds = array_map('intval', array_column($departmentList, 'department_id'));
         $requestedDepartment  = filter_var($this->request->getGet('department_id'), FILTER_VALIDATE_INT);
