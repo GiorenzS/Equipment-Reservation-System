@@ -271,3 +271,195 @@
         padding: 1.35rem;
     }
 }
+
+.login-forgot-row {
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+.login-forgot-link {
+    color: #426587;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-forgot-link:hover {
+    color: #183d69;
+    text-decoration: underline;
+}
+
+.login-actions {
+    margin-top: 1.4rem;
+}
+
+/* Login card layout is independent from the taller signup card. */
+.login-page {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f3f7;
+    color: var(--signup-ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.login-shell {
+    width: 100%;
+    max-width: 1060px;
+    margin: auto;
+}
+
+.login-card {
+    overflow: hidden;
+    min-height: 560px;
+    border: 1px solid rgba(21, 37, 59, 0.08);
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 20px 55px rgba(22, 35, 54, 0.16);
+}
+
+.login-brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 560px;
+    padding: clamp(2rem, 4.5vw, 4rem);
+    color: #fff;
+    background-image: linear-gradient(135deg, rgba(10, 32, 59, 0.76), rgba(17, 67, 116, 0.45)), url("../assets/backgrounds/login-image.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.login-brand::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(0deg, rgba(7, 23, 43, 0.48), transparent 70%);
+}
+
+.login-brand-content {
+    position: relative;
+    z-index: 1;
+    max-width: 360px;
+}
+
+.login-brand-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.06;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+}
+
+.login-form-panel {
+    margin-inline: auto;
+    max-width: 540px;
+    align-self: center;
+    justify-self: center;
+    padding: clamp(2rem, 4vw, 3.5rem);
+}
+
+.login-heading {
+    margin-bottom: 1.8rem;
+}
+
+.login-eyebrow {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #426587;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.login-heading h2 {
+    margin: 0 0 0.4rem;
+    color: #17243a;
+    font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+}
+
+.login-heading p {
+    margin: 0;
+    color: var(--signup-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.login-form-panel .form-label {
+    margin-bottom: 0.4rem;
+    color: #33445c;
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.login-form-panel .form-control {
+    min-height: 46px;
+    border-color: #dce2ea;
+    border-radius: 7px;
+    color: #1f2e43;
+    font-size: 0.88rem;
+}
+
+.login-form-panel .form-control:focus {
+    border-color: #587ca2;
+    box-shadow: 0 0 0 0.2rem rgba(54, 99, 145, 0.14);
+}
+
+.login-actions {
+    display: flex;
+    flex-direction: row; 
+    gap: 10px;
+    width: 100%;
+    margin-top: 1.4rem;
+}
+
+@media (max-width: 991.98px) {
+    .login-card {
+        max-width: 620px;
+        margin: auto;
+    }
+
+    .login-brand {
+        min-height: 300px;
+        padding: 2rem;
+        background-position: center 42%;
+    }
+
+    .login-brand-content {
+        max-width: 520px;
+    }
+
+    .login-brand-title {
+        font-size: 2rem;
+    }
+
+    .login-form-panel {
+        max-width: 520px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-shell {
+        padding: 0.75rem !important;
+    }
+
+    .login-card {
+        border-radius: 15px;
+    }
+
+    .login-brand {
+        min-height: 250px;
+        padding: 1.5rem;
+    }
+
+    .login-form-panel {
+        padding: 1.5rem;
+    }
+}

@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
 
 // Public authentication routes
 $routes->get('register', 'AuthController::register');
+$routes->get('signup', 'AuthController::register');
 $routes->post('register', 'AuthController::registerPost');
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::loginPost');
