@@ -86,10 +86,6 @@
                         <?php endif; ?>
                     </div>
 
-                    <div class="login-forgot-row">
-                        <a class="login-forgot-link" href="#" aria-label="Forgot password? Contact your system administrator.">Forgot password?</a>
-                    </div>
-
                     <div class="login-actions">
                         <a href="<?= base_url('signup') ?>" class="btn btn-signup-label">Sign Up</a>
                         <button type="submit" class="btn btn-create-account">
