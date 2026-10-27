@@ -21,7 +21,6 @@
                 <header class="login-heading">
                     <span class="login-eyebrow">CPC Equipment Reservation System</span>
                     <h2>Welcome Back</h2>
-                    <p>Login below to access the system or request an account.</p>
                 </header>
 
                 <?php if (session()->getFlashdata('success')): ?>

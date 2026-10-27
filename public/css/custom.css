@@ -307,13 +307,13 @@
 
 .login-shell {
     width: 100%;
-    max-width: 1060px;
+    max-width: 1130px;
     margin: auto;
 }
 
 .login-card {
     overflow: hidden;
-    min-height: 560px;
+    min-height: 680px;
     border: 1px solid rgba(21, 37, 59, 0.08);
     border-radius: 22px;
     background: #fff;
@@ -462,4 +462,11 @@
     .login-form-panel {
         padding: 1.5rem;
     }
+}
+
+.login-actions .btn-signup-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
