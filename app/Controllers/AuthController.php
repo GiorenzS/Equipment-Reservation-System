@@ -22,7 +22,7 @@ class AuthController extends BaseController
             ->orderBy('department_name', 'ASC')
             ->findAll();
 
-        return view('auth/register', [
+        return view('auth/signup', [
             'departments' => $departments,
         ]);
     }
