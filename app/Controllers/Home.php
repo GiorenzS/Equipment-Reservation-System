@@ -25,13 +25,17 @@ class Home extends BaseController
             ->get()
             ->getResultArray();
 
-        // Older accounts may only have the single department stored on users.
-        if ($departmentList === [] && $session->get('department_id')) {
-            $department = (new DepartmentModel())->find((int) $session->get('department_id'));
-            if ($department) {
-                $departmentList = [$department];
+        // Include the user's assigned department even when it is not yet linked
+        // through user_departments, so it can be the initial dashboard selection.
+        $assignedDepartmentId = (int) $session->get('department_id');
+        if ($assignedDepartmentId > 0 && ! in_array($assignedDepartmentId, array_map('intval', array_column($departmentList, 'department_id')), true)) {
+            $assignedDepartment = (new DepartmentModel())->find($assignedDepartmentId);
+            if ($assignedDepartment) {
+                $departmentList[] = $assignedDepartment;
             }
         }
+
+        usort($departmentList, static fn ($left, $right) => strcmp($left['department_name'], $right['department_name']));
 
         $allowedDepartmentIds = array_map('intval', array_column($departmentList, 'department_id'));
         $requestedDepartment  = filter_var($this->request->getGet('department_id'), FILTER_VALIDATE_INT);
