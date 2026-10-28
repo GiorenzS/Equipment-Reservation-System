@@ -53,7 +53,6 @@
 
             <div class="dropdown dashboard-department-dropdown">
                 <button class="dashboard-profile dashboard-department-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Choose department">
-                    <i class="bi bi-building" aria-hidden="true"></i>
                     <span class="dashboard-department-name">
                         <?php
                             $selectedDepartmentName = 'Select Department';
@@ -84,14 +83,14 @@
             </div>
 
             <div class="dropdown">
-                <button class="dashboard-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="dashboard-avatar"><?= esc(strtoupper(substr($userName ?: 'U', 0, 1))) ?></span>
-                    <span class="dashboard-profile-name"><?= esc($userName ?: 'User') ?></span>
+                <button class="catalog-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="catalog-avatar"><?= esc(strtoupper(substr($userName ?: 'U', 0, 1))) ?></span>
+                    <span class="catalog-profile-name"><?= esc($userName ?: 'User') ?></span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end dashboard-profile-menu">
+                <ul class="dropdown-menu dropdown-menu-end catalog-profile-menu">
                     <li><span class="dropdown-item-text"><?= esc($userRole) ?></span></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                    <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Logout</a></li>
                 </ul>
             </div>
         </header>
