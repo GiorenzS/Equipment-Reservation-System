@@ -311,73 +311,6 @@
 .quick-action-footer a:hover {
     text-decoration: underline;
 }
-
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.stat-card {
-    display: flex;
-    min-height: 132px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 17px 18px;
-    border: 1px solid #b5ccfa;
-    border-radius: 17px;
-    background: #e4edff;
-    box-shadow: 0 3px 8px rgba(27, 78, 155, 0.05);
-}
-
-.stat-card > div > span,
-.stat-card small {
-    display: block;
-    color: #4f5b70;
-    font-size: 0.8rem;
-}
-
-.stat-card strong {
-    display: block;
-    margin: 2px 0;
-    color: #10243d;
-    font-size: 2.25rem;
-    font-weight: 750;
-    line-height: 1.1;
-}
-
-.stat-card small {
-    color: #7c8799;
-    font-weight: 600;
-}
-
-.stat-icon {
-    display: grid;
-    width: 48px;
-    height: 48px;
-    flex: 0 0 48px;
-    place-items: center;
-    border-radius: 50%;
-    font-size: 1.3rem;
-}
-
-.stat-icon-blue {
-    background: #d5e5ff;
-    color: #145bd8;
-}
-
-.stat-icon-green {
-    background: #61efb9;
-    color: #08784f;
-}
-
-.stat-icon-red {
-    background: #ffe0dc;
-    color: #c62d2d;
-}
-
 [hidden] {
     display: none !important;
 }
@@ -395,10 +328,6 @@
 
     .quick-action-card:last-child {
         grid-column: span 2;
-    }
-
-    .dashboard-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -473,27 +402,6 @@
     .quick-action-card:last-child {
         grid-column: auto;
     }
-
-    .dashboard-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .stat-card {
-        min-height: 118px;
-        padding: 14px;
-    }
-
-    .stat-card strong {
-        font-size: 1.9rem;
-    }
-
-    .stat-icon {
-        width: 40px;
-        height: 40px;
-        flex-basis: 40px;
-        font-size: 1.1rem;
-    }
 }
 
 @media (max-width: 479.98px) {
@@ -518,10 +426,6 @@
 
     .dashboard-department-dropdown {
         min-width: 0;
-    }
-
-    .dashboard-stats {
-        grid-template-columns: 1fr;
     }
 }
 

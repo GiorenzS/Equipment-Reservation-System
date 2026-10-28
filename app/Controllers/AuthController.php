@@ -155,11 +155,9 @@ class AuthController extends BaseController
             'isLoggedIn'   => true,
         ]);
 
-        $displayName = ! empty($profile['first_name']) ? $profile['first_name'] : $user['id_number'];
-
         $redirectTo = strtoupper($user['role']) === 'ADMIN' ? 'admin/reservations' : '/';
 
-        return redirect()->to($redirectTo)->with('success', "Welcome back, {$displayName}!");
+        return redirect()->to($redirectTo);
     }
 
     // Log out user and invalidate session.

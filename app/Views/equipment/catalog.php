@@ -32,7 +32,7 @@ $to = min($currentPage * $perPage, $total);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipment Catalog - CPC Equipment Tracker</title>
+    <title>Equipment Catalog - CPC Equipment Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
@@ -42,7 +42,7 @@ $to = min($currentPage * $perPage, $total);
     <aside class="dashboard-sidebar">
         <a href="<?= base_url('dashboard') ?>" class="dashboard-brand">
             <span class="dashboard-brand-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
-            <span><strong>CPC</strong><small>Equipment Tracker</small></span>
+            <span><strong>CPC</strong><small>Equipment Reservation</small></span>
         </a>
         <nav class="dashboard-nav" aria-label="Main navigation">
             <a href="<?= base_url('dashboard') ?>" class="dashboard-nav-link">
@@ -97,34 +97,26 @@ $to = min($currentPage * $perPage, $total);
             <div class="alert alert-danger alert-dismissible fade show small" role="alert"><?= esc(session()->getFlashdata('error')) ?><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
         <?php endif; ?>
 
-        <section class="catalog-stats" aria-label="Equipment summary">
-            <article class="catalog-stat"><span class="catalog-stat-icon stat-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small>in catalog</small></div></article>
-            <article class="catalog-stat"><span class="catalog-stat-icon stat-green"><i class="bi bi-check-circle-fill" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Available</span><strong><?= esc((string) $equipmentStats['available']) ?></strong><small>ready to use</small></div></article>
-            <article class="catalog-stat"><span class="catalog-stat-icon stat-amber"><i class="bi bi-clock-fill" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Reserved</span><strong><?= esc((string) $equipmentStats['reserved']) ?></strong><small>currently reserved</small></div></article>
-            <article class="catalog-stat"><span class="catalog-stat-icon stat-red"><i class="bi bi-wrench-adjustable" aria-hidden="true"></i></span><div><span class="catalog-stat-label">In Maintenance</span><strong><?= esc((string) $equipmentStats['maintenance']) ?></strong><small>damaged / under repair</small></div></article>
-        </section>
-
         <section class="catalog-content" aria-labelledby="catalog-title">
             <div class="catalog-heading-row">
-                <h1 id="catalog-title"><span><i class="bi bi-box-seam" aria-hidden="true"></i></span>Equipment Catalog</h1>
+                <h1 id="catalog-title">Equipment Catalog</h1>
                 <span class="catalog-department-context"><?= esc($selectedDepartmentName) ?></span>
             </div>
             <form class="catalog-filter-form" method="get" action="<?= base_url('equipment') ?>">
                 <?php if ($selectedDepartmentId !== null): ?><input type="hidden" name="department_id" value="<?= (int) $selectedDepartmentId ?>"><?php endif; ?>
                 <label class="catalog-search-field"><i class="bi bi-search" aria-hidden="true"></i><input type="search" name="search" value="<?= esc($search) ?>" placeholder="Search equipment..." aria-label="Search equipment"></label>
-                <select class="form-select" name="category_id" aria-label="Filter by category">
+                <select class="form-select" name="category_id" onchange="this.form.submit()" aria-label="Filter by category">
                     <option value="">All Categories</option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= (int) $category['category_id'] ?>" <?= $categoryId === (int) $category['category_id'] ? 'selected' : '' ?>><?= esc($category['category_name']) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <select class="form-select" name="status" aria-label="Filter by status">
+                <select class="form-select" name="status" onchange="this.form.submit()" aria-label="Filter by status">
                     <option value="">All Status</option><option value="AVAILABLE" <?= $statusFilter === 'AVAILABLE' ? 'selected' : '' ?>>Available</option><option value="RESERVED" <?= $statusFilter === 'RESERVED' ? 'selected' : '' ?>>Reserved</option><option value="IN_USE" <?= $statusFilter === 'IN_USE' ? 'selected' : '' ?>>In Use</option>
                 </select>
-                <select class="form-select" name="condition_status" aria-label="Filter by condition">
+                <select class="form-select" name="condition_status" onchange="this.form.submit()" aria-label="Filter by condition">
                     <option value="">All Conditions</option><option value="GOOD" <?= $conditionFilter === 'GOOD' ? 'selected' : '' ?>>Good</option><option value="FAIR" <?= $conditionFilter === 'FAIR' ? 'selected' : '' ?>>Fair</option><option value="DAMAGED" <?= $conditionFilter === 'DAMAGED' ? 'selected' : '' ?>>Damaged</option>
                 </select>
-                <button class="btn btn-primary catalog-filter-submit" type="submit">Apply</button>
             </form>
 
             <?php if (empty($equipmentList)): ?>
@@ -176,7 +168,7 @@ $to = min($currentPage * $perPage, $total);
                 </div>
             <?php endif; ?>
             <footer class="catalog-pagination-footer">
-                <p>Showing <?= $from ?>–<?= $to ?> of <?= $total ?> equipment</p>
+                <p>Showing <?= $from ?>-<?= $to ?> of <?= $total ?> equipment</p>
                 <?= $pager->links('catalog', 'catalog_full') ?>
             </footer>
         </section>

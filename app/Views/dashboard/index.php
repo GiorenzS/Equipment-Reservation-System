@@ -18,6 +18,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('css/catalog.css') ?>" rel="stylesheet">
 </head>
 <body class="dashboard-page">
     <aside class="dashboard-sidebar">
@@ -135,22 +136,22 @@
             </article>
         </section>
 
-        <section class="dashboard-stats" aria-label="Equipment summary">
-            <article class="stat-card">
-                <div><span>Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small>in catalog</small></div>
-                <span class="stat-icon stat-icon-blue"><i class="bi bi-archive" aria-hidden="true"></i></span>
+        <section class="catalog-stats" aria-label="Equipment summary">
+            <article class="catalog-stat">
+                <span class="catalog-stat-icon stat-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+                <div><span class="catalog-stat-label">Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small>in catalog</small></div>
             </article>
-            <article class="stat-card">
-                <div><span>Available</span><strong><?= esc((string) $equipmentStats['available']) ?></strong><small class="text-success">ready to use</small></div>
-                <span class="stat-icon stat-icon-green"><i class="bi bi-check-circle" aria-hidden="true"></i></span>
+            <article class="catalog-stat">
+                <span class="catalog-stat-icon stat-green"><i class="bi bi-check-circle-fill" aria-hidden="true"></i></span>
+                <div><span class="catalog-stat-label">Available</span><strong><?= esc((string) $equipmentStats['available']) ?></strong><small>ready to use</small></div>
             </article>
-            <article class="stat-card">
-                <div><span>Reserved</span><strong><?= esc((string) $equipmentStats['reserved']) ?></strong><small>currently reserved</small></div>
-                <span class="stat-icon stat-icon-blue"><i class="bi bi-clock" aria-hidden="true"></i></span>
+            <article class="catalog-stat">
+                <span class="catalog-stat-icon stat-amber"><i class="bi bi-clock-fill" aria-hidden="true"></i></span>
+                <div><span class="catalog-stat-label">Reserved</span><strong><?= esc((string) $equipmentStats['reserved']) ?></strong><small>currently reserved</small></div>
             </article>
-            <article class="stat-card">
-                <div><span>In Maintenance</span><strong><?= esc((string) $equipmentStats['maintenance']) ?></strong><small class="text-danger">damaged condition</small></div>
-                <span class="stat-icon stat-icon-red"><i class="bi bi-wrench-adjustable" aria-hidden="true"></i></span>
+            <article class="catalog-stat">
+                <span class="catalog-stat-icon stat-red"><i class="bi bi-wrench-adjustable" aria-hidden="true"></i></span>
+                <div><span class="catalog-stat-label">In Maintenance</span><strong><?= esc((string) $equipmentStats['maintenance']) ?></strong><small>damaged / under repair</small></div>
             </article>
         </section>
 
