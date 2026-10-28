@@ -19,6 +19,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
     // Equipment routes
     $routes->get('equipment', 'EquipmentController::index');
+    $routes->get('equipment/catalog', 'EquipmentController::index');
     $routes->get('equipment/(:num)', 'EquipmentController::show/$1');
 
     // Reservation routes

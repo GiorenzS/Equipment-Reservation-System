@@ -1,9 +1,8 @@
 <?php
 /**
- * @var array $equipmentList
- * @var array $categories
  * @var array{total:int, available:int, reserved:int, maintenance:int} $equipmentStats
  * @var int $reservationCount
+ * @var array $recentHistory
  * @var array $departmentList
  * @var int|null $selectedDepartmentId
  * @var string $userName
@@ -155,121 +154,90 @@
             </article>
         </section>
 
-        <section class="catalog-section" id="equipment-catalog">
-            <div class="catalog-heading-row">
-                <h2><span class="catalog-heading-icon"><i class="bi bi-archive" aria-hidden="true"></i></span>Equipment Catalog</h2>
-                <div class="catalog-filters">
-                    <label class="catalog-search">
-                        <i class="bi bi-search" aria-hidden="true"></i>
-                        <input type="search" placeholder="Search equipment..." aria-label="Search equipment" data-catalog-search>
-                    </label>
-                    <select class="form-select" aria-label="Filter by category" data-category-filter>
-                        <option value="">All Categories</option>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?= esc(strtolower($category['category_name'])) ?>"><?= esc($category['category_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <select class="form-select" aria-label="Filter by status" data-status-filter>
-                        <option value="">All Status</option>
-                        <option value="available">Available</option>
-                        <option value="reserved">Reserved</option>
-                        <option value="in_use">In Use</option>
-                    </select>
-                    <select class="form-select" aria-label="Filter by condition" data-condition-filter>
-                        <option value="">All Conditions</option>
-                        <option value="good">Good</option>
-                        <option value="fair">Fair</option>
-                        <option value="damaged">Damaged</option>
-                    </select>
+        <section class="borrowing-history" aria-labelledby="borrowing-history-title">
+            <div class="borrowing-history-header">
+                <div>
+                    <h2 id="borrowing-history-title">Personal Borrowing History</h2>
                 </div>
             </div>
 
-            <div class="row g-3" data-equipment-grid>
-                <?php foreach ($equipmentList as $item): ?>
-                    <?php
-                        $status = strtolower((string) ($item['status'] ?? 'available'));
-                        $condition = strtolower((string) ($item['condition_status'] ?? 'good'));
-                        $category = strtolower((string) ($item['category_name'] ?? 'uncategorized'));
-                        $searchText = strtolower(trim(($item['equipment_code'] ?? '') . ' ' . ($item['equipment_name'] ?? '') . ' ' . ($item['brand'] ?? '') . ' ' . ($item['model'] ?? '') . ' ' . $category));
-                    ?>
-                    <div class="col-md-6 col-xl-4" data-equipment-card
-                         data-search="<?= esc($searchText) ?>"
-                         data-category="<?= esc($category) ?>"
-                         data-status="<?= esc($status) ?>"
-                         data-condition="<?= esc($condition) ?>">
-                        <article class="equipment-card">
-                            <a href="<?= base_url('equipment/' . $item['equipment_id']) ?>" class="equipment-card-image">
-                                <img src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
-                                     alt="<?= esc($item['equipment_name']) ?>" loading="lazy">
-                            </a>
-                            <div class="equipment-card-body">
-                                <span class="equipment-code"><?= esc($item['equipment_code']) ?></span>
-                                <h3><?= esc($item['equipment_name']) ?></h3>
-                                <p class="equipment-model"><?= esc(trim(($item['brand'] ?? '') . ' ' . ($item['model'] ?? '')) ?: 'Model not specified') ?></p>
-                                <span class="equipment-category"><?= esc($item['category_name'] ?? 'Uncategorized') ?></span>
-                                <div class="equipment-card-footer">
-                                    <div class="equipment-statuses">
-                                        <span class="equipment-status <?= $status === 'available' ? 'status-available' : 'status-other' ?>"><i></i><?= esc(ucwords(str_replace('_', ' ', $status))) ?></span>
-                                        <span class="equipment-status <?= $condition === 'good' ? 'status-available' : 'status-condition' ?>"><i></i><?= esc(ucwords($condition)) ?></span>
-                                    </div>
-                                    <?php if ($status === 'available'): ?>
-                                        <a href="<?= base_url('reservations/create/' . $item['equipment_id']) ?>" class="btn btn-reserve"><i class="bi bi-calendar2-plus me-1" aria-hidden="true"></i>Reserve</a>
-                                    <?php else: ?>
-                                        <button type="button" class="btn btn-reserve" disabled><i class="bi bi-calendar2-plus me-1" aria-hidden="true"></i>Reserve</button>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <p class="catalog-empty" data-empty-state <?= $equipmentList === [] ? '' : 'hidden' ?>>
-                <?= $equipmentList === [] ? 'No equipment is listed for this department yet.' : 'No equipment matches your filters.' ?>
-            </p>
+            <?php if (empty($recentHistory)): ?>
+                <div class="borrowing-history-empty">
+                    <span class="borrowing-history-empty-icon"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+                    <h3>No previous borrowings found</h3>
+                    <p>Browse the Equipment Catalog to make your first reservation.</p>
+                    <a href="<?= base_url('equipment/catalog') ?>" class="btn btn-primary btn-sm">Browse Equipment</a>
+                </div>
+            <?php else: ?>
+                <div class="table-responsive borrowing-history-table-wrap">
+                    <table class="table borrowing-history-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Equipment</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Borrowed / Return Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentHistory as $item): ?>
+                                <?php
+                                    $transactionStatus = strtoupper((string) ($item['transaction_status'] ?? ''));
+                                    $borrowedTimestamp = ! empty($item['borrow_date']) ? strtotime($item['borrow_date']) : false;
+                                    $returnDate = $item['actual_return_date'] ?: $item['expected_return_date'];
+                                    $returnTimestamp = ! empty($returnDate) ? strtotime($returnDate) : false;
+                                    $isReturned = $transactionStatus === 'RETURNED' || ! empty($item['actual_return_date']);
+                                    $isOverdue = ! $isReturned && $transactionStatus === 'CHECKED_OUT'
+                                        && $returnTimestamp !== false && $returnTimestamp < time();
+
+                                    if ($isReturned) {
+                                        $historyStatus = 'Returned';
+                                        $historyStatusClass = 'history-status-returned';
+                                    } elseif ($isOverdue) {
+                                        $historyStatus = 'Overdue';
+                                        $historyStatusClass = 'history-status-overdue';
+                                    } elseif ($transactionStatus === 'CHECKED_OUT') {
+                                        $historyStatus = 'Currently Borrowed';
+                                        $historyStatusClass = 'history-status-active';
+                                    } else {
+                                        $historyStatus = ucwords(strtolower(str_replace('_', ' ', $transactionStatus ?: 'Unknown')));
+                                        $historyStatusClass = 'history-status-other';
+                                    }
+
+                                    $equipmentModelName = trim((string) ($item['brand'] ?? '') . ' ' . (string) ($item['model'] ?? ''));
+                                ?>
+                                <tr>
+                                    <td>
+                                        <div class="history-equipment-name"><?= esc($item['equipment_name']) ?></div>
+                                        <?php if ($equipmentModelName !== ''): ?><small class="history-equipment-model"><?= esc($equipmentModelName) ?></small><?php endif; ?>
+                                        <span class="history-asset-tag"><?= esc($item['equipment_code']) ?></span>
+                                    </td>
+                                    <td><span class="history-category"><?= esc($item['category_name'] ?? 'Uncategorized') ?></span></td>
+                                    <td>
+                                        <div class="history-date-range">
+                                            <span><?= $borrowedTimestamp !== false ? esc(date('M j, Y', $borrowedTimestamp)) : '�' ?></span>
+                                            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                            <span><?= $returnTimestamp !== false ? esc(date('M j, Y', $returnTimestamp)) : '�' ?></span>
+                                        </div>
+                                        <small class="history-date-caption"><?= $isReturned ? 'Borrowed - Returned' : 'Borrowed - Due back' ?></small>
+                                    </td>
+                                    <td><span class="history-status <?= $historyStatusClass ?>"><?= esc($historyStatus) ?></span></td>
+                                    <td class="text-end">
+                                        <?php if (strtoupper((string) ($item['equipment_status'] ?? '')) === 'AVAILABLE'): ?>
+                                            <a href="<?= base_url('reservations/create/' . (int) $item['equipment_id']) ?>" class="btn btn-primary btn-sm history-book-again"><i class="bi bi-calendar2-plus me-1" aria-hidden="true"></i>Book Again</a>
+                                        <?php else: ?>
+                                            <a href="<?= base_url('equipment/' . (int) $item['equipment_id']) ?>" class="btn btn-outline-secondary btn-sm history-book-again">View Item</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </section>
     </main>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        (() => {
-            const cards = Array.from(document.querySelectorAll('[data-equipment-card]'));
-            const globalSearch = document.querySelector('[data-global-search]');
-            const catalogSearch = document.querySelector('[data-catalog-search]');
-            const categoryFilter = document.querySelector('[data-category-filter]');
-            const statusFilter = document.querySelector('[data-status-filter]');
-            const conditionFilter = document.querySelector('[data-condition-filter]');
-            const emptyState = document.querySelector('[data-empty-state]');
-
-            function filterEquipment() {
-                const query = (catalogSearch?.value || globalSearch?.value || '').trim().toLowerCase();
-                let visibleCount = 0;
-
-                cards.forEach((card) => {
-                    const matches = (!query || card.dataset.search.includes(query))
-                        && (!categoryFilter.value || card.dataset.category === categoryFilter.value)
-                        && (!statusFilter.value || card.dataset.status === statusFilter.value)
-                        && (!conditionFilter.value || card.dataset.condition === conditionFilter.value);
-                    card.hidden = !matches;
-                    if (matches) visibleCount++;
-                });
-
-                if (emptyState) emptyState.hidden = visibleCount > 0;
-            }
-
-            [catalogSearch, categoryFilter, statusFilter, conditionFilter].forEach((control) => {
-                control?.addEventListener('input', filterEquipment);
-                control?.addEventListener('change', filterEquipment);
-            });
-
-            globalSearch?.addEventListener('input', () => {
-                if (catalogSearch) catalogSearch.value = globalSearch.value;
-                filterEquipment();
-            });
-            catalogSearch?.addEventListener('input', () => {
-                if (globalSearch) globalSearch.value = catalogSearch.value;
-                filterEquipment();
-            });
-        })();
-    </script>
 </body>
 </html>

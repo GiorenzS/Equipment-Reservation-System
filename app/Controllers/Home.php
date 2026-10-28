@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\CategoryModel;
+use App\Models\BorrowTransactionModel;
 use App\Models\DepartmentModel;
 use App\Models\EquipmentModel;
 use App\Models\ReservationModel;
@@ -15,7 +15,6 @@ class Home extends BaseController
     {
         $session = session();
         $userId  = (int) $session->get('user_id');
-        $db      = db_connect();
 
         // The dashboard picker lets users browse inventory across all departments.
         $departmentList = (new DepartmentModel())
@@ -49,7 +48,6 @@ class Home extends BaseController
         }
 
         $equipmentList = $equipmentQuery->findAll();
-        $categories    = (new CategoryModel())->orderBy('category_name', 'ASC')->findAll();
 
         $equipmentStats = [
             'total'       => count($equipmentList),
@@ -62,13 +60,23 @@ class Home extends BaseController
             ->where('user_id', $userId)
             ->countAllResults();
 
+        $recentHistory = (new BorrowTransactionModel())
+            ->select('borrow_transactions.transaction_id, borrow_transactions.borrow_date, borrow_transactions.expected_return_date, borrow_transactions.actual_return_date, borrow_transactions.status AS transaction_status, borrow_items.equipment_id, equipment.equipment_name, equipment.equipment_code, equipment.brand, equipment.model, equipment.status AS equipment_status, equipment_categories.category_name')
+            ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
+            ->join('equipment', 'equipment.equipment_id = borrow_items.equipment_id')
+            ->join('equipment_categories', 'equipment_categories.category_id = equipment.category_id', 'left')
+            ->where('borrow_transactions.user_id', $userId)
+            ->orderBy('borrow_transactions.borrow_date', 'DESC')
+            ->orderBy('borrow_transactions.transaction_id', 'DESC')
+
+            ->findAll(5);
+
         $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
 
         return view('dashboard/index', [
-            'equipmentList'        => $equipmentList,
-            'categories'           => $categories,
             'equipmentStats'       => $equipmentStats,
             'reservationCount'     => $reservationCount,
+            'recentHistory'        => $recentHistory,
             'departmentList'       => $departmentList,
             'selectedDepartmentId' => $selectedDepartmentId,
             'userName'             => $userName,
