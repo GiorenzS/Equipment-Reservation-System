@@ -8,13 +8,18 @@
  * @var string $userName
  * @var string $userRole
  */
+$departmentQuery = $selectedDepartmentId !== null ? '&department_id=' . (int) $selectedDepartmentId : '';
+$catalogUrl = base_url('equipment/catalog') . ($selectedDepartmentId !== null ? '?department_id=' . (int) $selectedDepartmentId : '');
+$availableEquipmentUrl = base_url('equipment/catalog?status=Available') . $departmentQuery;
+$reservedEquipmentUrl = base_url('equipment/catalog?status=Reserved') . $departmentQuery;
+$maintenanceEquipmentUrl = base_url('equipment/catalog?condition=Damaged') . $departmentQuery;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CPC Equipment Tracker</title>
+    <title>Dashboard - CPC Equipment Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
@@ -109,49 +114,49 @@
         <?php endif; ?>
 
         <section class="dashboard-quick-actions" aria-label="Quick actions">
-            <article class="quick-action-card">
+            <a class="quick-action-card" href="<?= esc($catalogUrl) ?>">
                 <div class="quick-action-top">
                     <div><span class="quick-action-kicker">Quick Action</span><h2>New Reservation</h2></div>
                     <span class="quick-action-icon"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span>
                 </div>
                 <p>Reserve equipment for your upcoming classes and projects.</p>
-                <div class="quick-action-footer"><span>Choose an available item</span><a href="#equipment-catalog">Book Now <i class="bi bi-arrow-right"></i></a></div>
-            </article>
-            <article class="quick-action-card">
+                <div class="quick-action-footer"><span>Choose an available item</span><span class="quick-action-link">Book Now <i class="bi bi-arrow-right"></i></span></div>
+            </a>
+            <a class="quick-action-card" href="<?= esc($catalogUrl) ?>">
                 <div class="quick-action-top">
                     <div><span class="quick-action-kicker">Inventory</span><h2>View Equipment</h2></div>
                     <span class="quick-action-icon"><i class="bi bi-clipboard2-check" aria-hidden="true"></i></span>
                 </div>
                 <p>Browse equipment available in your selected department.</p>
-                <div class="quick-action-footer"><span><?= esc((string) $equipmentStats['total']) ?> items in catalog</span><a href="<?= base_url('equipment') ?>">Open Catalog <i class="bi bi-arrow-right"></i></a></div>
-            </article>
-            <article class="quick-action-card quick-action-card-green">
+                <div class="quick-action-footer"><span><?= esc((string) $equipmentStats['total']) ?> items in catalog</span><span class="quick-action-link">Open Catalog <i class="bi bi-arrow-right"></i></span></div>
+            </a>
+            <a class="quick-action-card quick-action-card-green" href="<?= base_url('reservations') ?>">
                 <div class="quick-action-top">
                     <div><span class="quick-action-kicker">My Activity</span><h2>My Reservations</h2></div>
                     <span class="quick-action-icon"><i class="bi bi-calendar-check" aria-hidden="true"></i></span>
                 </div>
                 <p>Track the status of your reservation requests.</p>
-                <div class="quick-action-footer"><span><?= esc((string) $reservationCount) ?> reservations</span><a href="<?= base_url('reservations') ?>">Review Status <i class="bi bi-arrow-right"></i></a></div>
-            </article>
+                <div class="quick-action-footer"><span><?= esc((string) $reservationCount) ?> reservations</span><span class="quick-action-link">Review Status <i class="bi bi-arrow-right"></i></span></div>
+            </a>
         </section>
 
         <section class="catalog-stats" aria-label="Equipment summary">
-            <article class="catalog-stat">
+            <a class="catalog-stat catalog-stat-link" href="<?= esc($catalogUrl) ?>" aria-label="View all equipment in the selected department">
                 <span class="catalog-stat-icon stat-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
                 <div><span class="catalog-stat-label">Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small>in catalog</small></div>
-            </article>
-            <article class="catalog-stat">
+            </a>
+            <a class="catalog-stat catalog-stat-link" href="<?= esc($availableEquipmentUrl) ?>" aria-label="View available equipment">
                 <span class="catalog-stat-icon stat-green"><i class="bi bi-check-circle-fill" aria-hidden="true"></i></span>
                 <div><span class="catalog-stat-label">Available</span><strong><?= esc((string) $equipmentStats['available']) ?></strong><small>ready to use</small></div>
-            </article>
-            <article class="catalog-stat">
+            </a>
+            <a class="catalog-stat catalog-stat-link" href="<?= esc($reservedEquipmentUrl) ?>" aria-label="View reserved equipment">
                 <span class="catalog-stat-icon stat-amber"><i class="bi bi-clock-fill" aria-hidden="true"></i></span>
                 <div><span class="catalog-stat-label">Reserved</span><strong><?= esc((string) $equipmentStats['reserved']) ?></strong><small>currently reserved</small></div>
-            </article>
-            <article class="catalog-stat">
+            </a>
+            <a class="catalog-stat catalog-stat-link" href="<?= esc($maintenanceEquipmentUrl) ?>" aria-label="View equipment needing maintenance">
                 <span class="catalog-stat-icon stat-red"><i class="bi bi-wrench-adjustable" aria-hidden="true"></i></span>
                 <div><span class="catalog-stat-label">In Maintenance</span><strong><?= esc((string) $equipmentStats['maintenance']) ?></strong><small>damaged / under repair</small></div>
-            </article>
+            </a>
         </section>
 
         <section class="borrowing-history" aria-labelledby="borrowing-history-title">

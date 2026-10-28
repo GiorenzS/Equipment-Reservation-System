@@ -51,7 +51,10 @@ class EquipmentController extends BaseController
         $search = is_string($search) ? trim($search) : '';
         $categoryId = filter_var($this->request->getGet('category_id'), FILTER_VALIDATE_INT);
         $statusInput = $this->request->getGet('status');
-        $conditionInput = $this->request->getGet('condition_status');
+        $conditionInput = $this->request->getGet('condition');
+        if (! is_string($conditionInput) || trim($conditionInput) === '') {
+            $conditionInput = $this->request->getGet('condition_status');
+        }
         $status = is_string($statusInput) ? strtoupper($statusInput) : '';
         $condition = is_string($conditionInput) ? strtoupper($conditionInput) : '';
 
