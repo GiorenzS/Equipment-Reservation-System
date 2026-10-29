@@ -69,7 +69,7 @@ $to = min($currentPage * $perPage, $total);
             </form>
             <div class="dropdown catalog-department-dropdown">
                 <button class="catalog-profile catalog-department-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Choose department">
-                    <i class="bi bi-box-seam" aria-hidden="true"></i><span class="catalog-department-name"><?= esc($selectedDepartmentName) ?></span>
+                    <span class="catalog-department-name"><?= esc($selectedDepartmentName) ?></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end catalog-profile-menu">
                     <?php foreach ($departmentList as $department): ?>

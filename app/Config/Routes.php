@@ -1,8 +1,6 @@
 <?php
 
-use CodeIgniter\Router\RouteCollection;
-
-/** @var RouteCollection $routes */
+/** @var \CodeIgniter\Router\RouteCollection $routes */
 
 // Public authentication routes
 $routes->get('register', 'AuthController::register');
@@ -24,6 +22,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
     // Reservation routes
     $routes->get('reservations', 'ReservationController::index');
+    $routes->get('reservations/(:num)', 'ReservationController::show/$1');
     $routes->get('reservations/create/(:num)', 'ReservationController::create/$1');
     $routes->post('reservations/store', 'ReservationController::store');
 
