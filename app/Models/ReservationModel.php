@@ -33,7 +33,7 @@ class ReservationModel extends Model
         'start_time'       => 'required',
         'end_time'         => 'required',
         'purpose'          => 'required|max_length[255]',
-        'status'           => 'permit_empty|in_list[PENDING,APPROVED,REJECTED,CANCELLED]',
+        'status'           => 'permit_empty|in_list[PENDING,APPROVED,CHECKED_OUT,RETURNED,REJECTED,CANCELLED]',
     ];
 
     /**

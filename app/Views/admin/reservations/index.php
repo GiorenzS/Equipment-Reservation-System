@@ -20,7 +20,7 @@
         <?php endforeach; ?>
 
         <div class="card mb-4">
-            <div class="card-header fw-semibold">Reservation requests</div>
+            <div class="card-header fw-semibold">Pending approvals</div>
             <div class="table-responsive">
                 <table class="table table-striped align-middle mb-0">
                     <thead><tr><th>User</th><th>Equipment</th><th>Date</th><th>Time</th><th>Purpose</th><th>Status</th><th>Actions</th></tr></thead>
@@ -43,11 +43,38 @@
                                         <button class="btn btn-<?= $style ?> btn-sm"><?= ucfirst(strtolower($status)) ?></button>
                                     </form>
                                 <?php endforeach; ?>
-                            <?php elseif (strtoupper($reservation['status']) === 'APPROVED' && strtoupper($reservation['equipment_status']) === 'AVAILABLE'): ?>
+                            <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">Approved reservations awaiting checkout</div>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead><tr><th>User</th><th>Equipment</th><th>Date</th><th>Time</th><th>Purpose</th><th>Action</th></tr></thead>
+                    <tbody>
+                    <?php if (empty($approvedReservations)): ?>
+                        <tr><td colspan="6" class="text-center text-muted py-4">No approved reservations are waiting for checkout.</td></tr>
+                    <?php else: foreach ($approvedReservations as $reservation): ?>
+                        <tr>
+                            <td><?= esc(trim(($reservation['first_name'] ?? '') . ' ' . ($reservation['last_name'] ?? '')) ?: $reservation['id_number']) ?></td>
+                            <td><?= esc($reservation['equipment_name']) ?> <small class="text-muted">(<?= esc($reservation['equipment_code']) ?>)</small></td>
+                            <td><?= esc($reservation['reservation_date']) ?></td>
+                            <td><?= esc($reservation['start_time']) ?>–<?= esc($reservation['end_time']) ?></td>
+                            <td><?= esc($reservation['purpose']) ?></td>
+                            <td>
+                            <?php if (strtoupper($reservation['equipment_status']) === 'AVAILABLE'): ?>
                                 <form method="post" action="<?= base_url('admin/reservations/' . $reservation['reservation_id'] . '/checkout') ?>">
                                     <?= csrf_field() ?>
                                     <button class="btn btn-primary btn-sm">Check out</button>
                                 </form>
+                            <?php else: ?>
+                                <span class="text-muted small">Equipment unavailable</span>
                             <?php endif; ?>
                             </td>
                         </tr>

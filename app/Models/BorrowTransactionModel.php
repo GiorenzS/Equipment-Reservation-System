@@ -12,6 +12,7 @@ class BorrowTransactionModel extends Model
     protected $allowedFields = [
         'user_id',
         'processed_by',
+        'reservation_id',
         'borrow_date',
         'expected_return_date',
         'actual_return_date',

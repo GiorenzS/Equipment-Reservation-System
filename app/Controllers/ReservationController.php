@@ -32,7 +32,7 @@ class ReservationController extends BaseController
         $statusInput = $this->request->getGet('status');
         $status = is_string($statusInput) ? strtoupper(trim($statusInput)) : '';
 
-        if (! in_array($status, ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'], true)) {
+        if (! in_array($status, ['PENDING', 'APPROVED', 'CHECKED_OUT', 'RETURNED', 'REJECTED', 'CANCELLED'], true)) {
             $status = '';
         }
 

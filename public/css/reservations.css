@@ -233,6 +233,16 @@
     color: #08774e;
 }
 
+.reservation-status-checked-out {
+    background: #e6efff;
+    color: #205bc7;
+}
+
+.reservation-status-returned {
+    background: #e1f6ea;
+    color: #08794f;
+}
+
 .reservation-status-rejected {
     background: #fee9e9;
     color: #c33232;

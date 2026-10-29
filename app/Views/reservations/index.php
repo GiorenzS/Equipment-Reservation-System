@@ -129,7 +129,7 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
                     <label class="reservation-search-field"><i class="bi bi-search" aria-hidden="true"></i><input type="search" name="search" value="<?= esc($search) ?>" placeholder="Search reservations..." aria-label="Search reservations"></label>
                     <select class="form-select" name="status" aria-label="Filter by status" onchange="this.form.submit()">
                         <option value="">All Statuses</option>
-                        <?php foreach (['PENDING' => 'Pending', 'APPROVED' => 'Approved', 'REJECTED' => 'Rejected', 'CANCELLED' => 'Cancelled'] as $value => $label): ?>
+                        <?php foreach (['PENDING' => 'Pending', 'APPROVED' => 'Approved', 'CHECKED_OUT' => 'Checked Out', 'RETURNED' => 'Returned', 'REJECTED' => 'Rejected', 'CANCELLED' => 'Cancelled'] as $value => $label): ?>
                             <option value="<?= $value ?>" <?= $statusFilter === $value ? 'selected' : '' ?>><?= $label ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -159,6 +159,8 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
                                         $status = strtoupper((string) ($res['status'] ?? 'PENDING'));
                                         $statusClass = match ($status) {
                                             'APPROVED' => 'reservation-status-approved',
+                                            'CHECKED_OUT' => 'reservation-status-checked-out',
+                                            'RETURNED' => 'reservation-status-returned',
                                             'REJECTED' => 'reservation-status-rejected',
                                             'CANCELLED' => 'reservation-status-cancelled',
                                             default => 'reservation-status-pending',
