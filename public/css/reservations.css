@@ -271,32 +271,13 @@
     font-size: .86rem;
 }
 
-.reservation-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 14px 18px;
-    border-top: 1px solid #edf1f6;
-}
 
-.reservation-pagination p {
-    margin: 0;
-    color: #748198;
-    font-size: .82rem;
-}
 
-.reservation-pagination .page-link {
-    min-width: 30px;
-    border-color: #dce4ee;
-    color: #43607e;
-    text-align: center;
-}
 
-.reservation-pagination .page-item.active .page-link {
-    border-color: #2463eb;
-    background: #2463eb;
-}
+
+
+
+
 
 .reservation-detail-card {
     max-width: 720px;
@@ -352,6 +333,5 @@
     .reservation-banner { align-items: flex-start; flex-direction: column; padding: 20px; }
     .reservation-filter-form { flex-wrap: wrap; }
     .reservation-filter-form .form-select { flex: 1; }
-    .reservation-pagination { align-items: flex-start; flex-direction: column; }
     .reservation-detail-grid { grid-template-columns: 1fr; }
 }

@@ -40,6 +40,7 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('css/catalog.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/reservations.css') ?>" rel="stylesheet">
 </head>
 <body class="dashboard-page reservations-page">
@@ -177,11 +178,12 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
                         </tbody>
                     </table>
                 </div>
-            <footer class="reservation-pagination">
-                <p>Showing <?= $from ?>-<?= $to ?> of <?= $total ?> equipment</p>
-                <?= $pager->links('catalog', 'catalog_full') ?>
-            </footer>
+
             </div>
+            <footer class="catalog-pagination-footer">
+                <p>Showing <?= $from ?>-<?= $to ?> of <?= $total ?> reservations</p>
+                <?= $pager->links('reservations', 'catalog_full') ?>
+            </footer>
         </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
