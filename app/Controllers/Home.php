@@ -60,8 +60,17 @@ class Home extends BaseController
             ->where('user_id', $userId)
             ->countAllResults();
 
+        $db = \Config\Database::connect();
+        $latestBorrowingByEquipment = $db->table('borrow_transactions')
+            ->select('borrow_items.equipment_id, MAX(borrow_transactions.transaction_id) AS latest_transaction_id', false)
+            ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
+            ->where('borrow_transactions.user_id', $userId)
+            ->groupBy('borrow_items.equipment_id')
+            ->getCompiledSelect();
+
         $recentHistory = (new BorrowTransactionModel())
             ->select('borrow_transactions.transaction_id, borrow_transactions.borrow_date, borrow_transactions.expected_return_date, borrow_transactions.actual_return_date, borrow_transactions.status AS transaction_status, borrow_items.equipment_id, equipment.equipment_name, equipment.equipment_code, equipment.brand, equipment.model, equipment.status AS equipment_status, equipment_categories.category_name')
+            ->join("($latestBorrowingByEquipment) latest_borrowing", 'latest_borrowing.latest_transaction_id = borrow_transactions.transaction_id')
             ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
             ->join('equipment', 'equipment.equipment_id = borrow_items.equipment_id')
             ->join('equipment_categories', 'equipment_categories.category_id = equipment.category_id', 'left')

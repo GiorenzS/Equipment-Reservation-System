@@ -47,7 +47,7 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
     <aside class="dashboard-sidebar">
         <a href="<?= base_url('dashboard') ?>" class="dashboard-brand">
             <span class="dashboard-brand-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
-            <span><strong>CPC</strong><small>Equipment Tracker</small></span>
+            <span><strong>CPC</strong><small>Equipment Reservation</small></span>
         </a>
         <nav class="dashboard-nav" aria-label="Main navigation">
             <a href="<?= base_url('dashboard') ?>" class="dashboard-nav-link"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Dashboard</span></a>
@@ -123,7 +123,7 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
 
         <section class="reservation-history" aria-labelledby="reservation-history-title">
             <div class="reservation-history-heading">
-                <h2 id="reservation-history-title"><i class="bi bi-calendar3" aria-hidden="true"></i>Reservation History</h2>
+                <h2 id="reservation-history-title">Reservation History</h2>
                 <form class="reservation-filter-form" method="get" action="<?= base_url('reservations') ?>">
                     <?php if ($selectedDepartmentId !== null): ?><input type="hidden" name="department_id" value="<?= (int) $selectedDepartmentId ?>"><?php endif; ?>
                     <label class="reservation-search-field"><i class="bi bi-search" aria-hidden="true"></i><input type="search" name="search" value="<?= esc($search) ?>" placeholder="Search reservations..." aria-label="Search reservations"></label>
