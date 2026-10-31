@@ -37,7 +37,7 @@ class ReservationController extends BaseController
         }
 
         $reservationModel = (new ReservationModel())
-            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code, equipment.brand, equipment.model, equipment.department_id, equipment_categories.category_name')
+            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code, equipment.image, equipment.brand, equipment.model, equipment.department_id, equipment_categories.category_name')
             ->join('equipment', 'equipment.equipment_id = reservations.equipment_id', 'left')
             ->join('equipment_categories', 'equipment_categories.category_id = equipment.category_id', 'left')
             ->where('reservations.user_id', $userId)
@@ -84,7 +84,7 @@ class ReservationController extends BaseController
     public function show($reservationId = null)
     {
         $reservation = (new ReservationModel())
-            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code, equipment.brand, equipment.model, equipment_categories.category_name')
+            ->select('reservations.*, equipment.equipment_name, equipment.equipment_code, equipment.image, equipment.brand, equipment.model, equipment_categories.category_name')
             ->join('equipment', 'equipment.equipment_id = reservations.equipment_id', 'left')
             ->join('equipment_categories', 'equipment_categories.category_id = equipment.category_id', 'left')
             ->where('reservations.reservation_id', (int) $reservationId)

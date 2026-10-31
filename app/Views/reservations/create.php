@@ -1,3 +1,4 @@
+<?php /** @var array<string, mixed> $equipment Equipment item supplied by ReservationController::create(). */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

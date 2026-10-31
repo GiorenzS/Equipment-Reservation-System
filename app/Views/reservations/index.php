@@ -173,13 +173,16 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
                                         <td><?= esc(date('g:i A', strtotime((string) $res['start_time']))) ?> <span class="reservation-time-separator"> - </span> <?= esc(date('g:i A', strtotime((string) $res['end_time']))) ?></td>
                                         <td><span class="reservation-purpose" title="<?= esc($res['purpose']) ?>"><?= esc($res['purpose']) ?></span></td>
                                         <td><span class="reservation-status <?= $statusClass ?>"><?= esc(ucfirst(strtolower($status))) ?></span></td>
-                                        <td class="text-end"><a href="<?= base_url('reservations/' . (int) $res['reservation_id']) ?>" class="btn reservation-view-button" aria-label="View reservation <?= (int) $res['reservation_id'] ?>"><i class="bi bi-eye" aria-hidden="true"></i></a></td>
+                                        <td class="text-end"><button type="button" class="btn reservation-view-button" data-bs-toggle="modal" data-bs-target="#reservationDetails<?= (int) $res['reservation_id'] ?>" aria-label="View reservation <?= (int) $res['reservation_id'] ?>"><i class="bi bi-eye" aria-hidden="true"></i></button></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
+                <?php foreach ($reservations as $res): ?>
+                    <?= view('reservations/modal_show', ['reservation' => $res]) ?>
+                <?php endforeach; ?>
 
             </div>
             <footer class="catalog-pagination-footer">
