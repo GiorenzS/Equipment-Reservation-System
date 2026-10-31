@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="transactions">
             <div class="card-header fw-semibold">Checked out equipment</div>
             <div class="table-responsive">
                 <table class="table table-striped align-middle mb-0">

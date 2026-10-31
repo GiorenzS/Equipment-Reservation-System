@@ -155,7 +155,7 @@ class AuthController extends BaseController
             'isLoggedIn'   => true,
         ]);
 
-        $redirectTo = strtoupper($user['role']) === 'ADMIN' ? 'admin/reservations' : '/';
+        $redirectTo = strtoupper($user['role']) === 'ADMIN' ? 'admin' : '/';
 
         return redirect()->to($redirectTo);
     }

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\BorrowItemModel;
 use App\Models\BorrowTransactionModel;
+use App\Models\DepartmentModel;
 use App\Models\EquipmentModel;
 use App\Models\ReservationModel;
 use Config\Database;
@@ -11,6 +12,166 @@ use Config\Database;
 class AdminController extends BaseController
 {
     protected $helpers = ['form', 'url'];
+
+    public function dashboard()
+    {
+        $session = session();
+        $departmentList = (new DepartmentModel())->orderBy('department_name', 'ASC')->findAll();
+        $departmentIds = array_map('intval', array_column($departmentList, 'department_id'));
+        $requestedDepartment = filter_var($this->request->getGet('department_id'), FILTER_VALIDATE_INT);
+        $assignedDepartmentId = (int) $session->get('department_id');
+        $selectedDepartmentId = $requestedDepartment !== false && in_array($requestedDepartment, $departmentIds, true)
+            ? $requestedDepartment
+            : (in_array($assignedDepartmentId, $departmentIds, true) ? $assignedDepartmentId : ($departmentIds[0] ?? null));
+
+        $searchInput = $this->request->getGet('search');
+        $search = is_string($searchInput) ? trim($searchInput) : '';
+        $filterInput = $this->request->getGet('filter');
+        $filter = is_string($filterInput) ? strtolower(trim($filterInput)) : 'all';
+        if (! in_array($filter, ['all', 'faculty', 'students'], true)) {
+            $filter = 'all';
+        }
+
+        $scopeDepartment = static function ($query) use ($selectedDepartmentId) {
+            if ($selectedDepartmentId !== null) {
+                $query->groupStart()
+                    ->where('equipment.department_id', $selectedDepartmentId)
+                    ->orWhere('equipment.department_id IS NULL', null, false)
+                    ->groupEnd();
+            }
+            return $query;
+        };
+
+        $equipmentQuery = static fn () => $scopeDepartment(new EquipmentModel());
+        $totalEquipment = $equipmentQuery()->countAllResults();
+        $previousMonthEquipment = $equipmentQuery()->where('created_at <', date('Y-m-01 00:00:00'))->countAllResults();
+        $equipmentGrowth = $previousMonthEquipment > 0
+            ? (int) round((($totalEquipment - $previousMonthEquipment) / $previousMonthEquipment) * 100)
+            : null;
+
+        $reservationQuery = static function () use ($selectedDepartmentId) {
+            $query = (new ReservationModel())
+                ->join('equipment', 'equipment.equipment_id = reservations.equipment_id');
+            if ($selectedDepartmentId !== null) {
+                $query->groupStart()
+                    ->where('equipment.department_id', $selectedDepartmentId)
+                    ->orWhere('equipment.department_id IS NULL', null, false)
+                    ->groupEnd();
+            }
+            return $query;
+        };
+        $activeReservations = $reservationQuery()->whereIn('reservations.status', ['PENDING', 'APPROVED'])->countAllResults();
+
+        $transactionQuery = static function () use ($selectedDepartmentId) {
+            $query = Database::connect()->table('borrow_transactions')
+                ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
+                ->join('equipment', 'equipment.equipment_id = borrow_items.equipment_id');
+            if ($selectedDepartmentId !== null) {
+                $query->groupStart()
+                    ->where('equipment.department_id', $selectedDepartmentId)
+                    ->orWhere('equipment.department_id IS NULL', null, false)
+                    ->groupEnd();
+            }
+            return $query;
+        };
+        $countTransactions = static function (callable $applyFilter) use ($transactionQuery): int {
+            $query = $transactionQuery()->select('COUNT(DISTINCT borrow_transactions.transaction_id) AS total', false);
+            $applyFilter($query);
+            return (int) ($query->get()->getRowArray()['total'] ?? 0);
+        };
+        $ongoingBorrowings = $countTransactions(static fn ($query) => $query->where('borrow_transactions.status', 'CHECKED_OUT'));
+        $todayStart = date('Y-m-d 00:00:00');
+        $tomorrowStart = date('Y-m-d 00:00:00', strtotime('+1 day'));
+        $dueToday = $countTransactions(static fn ($query) => $query
+            ->where('borrow_transactions.status', 'CHECKED_OUT')
+            ->where('borrow_transactions.expected_return_date >=', $todayStart)
+            ->where('borrow_transactions.expected_return_date <', $tomorrowStart));
+        $pendingReturns = $countTransactions(static fn ($query) => $query
+            ->where('borrow_transactions.status', 'CHECKED_OUT')
+            ->where('borrow_transactions.expected_return_date <', $tomorrowStart));
+        $now = date('Y-m-d H:i:s');
+        $overdueReturns = $countTransactions(static function ($query) use ($now) {
+            $query->groupStart()
+                ->groupStart()
+                    ->where('borrow_transactions.status', 'CHECKED_OUT')
+                    ->where('borrow_transactions.expected_return_date <', $now)
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('borrow_transactions.status', 'RETURNED')
+                    ->where('borrow_transactions.actual_return_date > borrow_transactions.expected_return_date', null, false)
+                ->groupEnd()
+                ->groupEnd();
+        });
+
+        $pendingQuery = static function (?string $role = null) use ($selectedDepartmentId, $search) {
+            $query = (new ReservationModel())
+                ->select('reservations.*, users.id_number, users.role AS requester_role, user_profiles.first_name, user_profiles.last_name, equipment.equipment_name, equipment.equipment_code, equipment.department_id, equipment.status AS equipment_status')
+                ->join('users', 'users.user_id = reservations.user_id')
+                ->join('user_profiles', 'user_profiles.user_id = users.user_id', 'left')
+                ->join('equipment', 'equipment.equipment_id = reservations.equipment_id')
+                ->where('reservations.status', 'PENDING');
+            if ($selectedDepartmentId !== null) {
+                $query->groupStart()
+                    ->where('equipment.department_id', $selectedDepartmentId)
+                    ->orWhere('equipment.department_id IS NULL', null, false)
+                    ->groupEnd();
+            }
+            if ($search !== '') {
+                $query->groupStart()
+                    ->like('equipment.equipment_name', $search)
+                    ->orLike('equipment.equipment_code', $search)
+                    ->orLike('users.id_number', $search)
+                    ->orLike('user_profiles.first_name', $search)
+                    ->orLike('user_profiles.last_name', $search)
+                    ->orLike('reservations.purpose', $search)
+                    ->groupEnd();
+            }
+            if ($role !== null) {
+                $query->where('users.role', $role);
+            }
+            return $query;
+        };
+
+        $pendingCounts = [
+            'all' => $pendingQuery()->countAllResults(),
+            'faculty' => $pendingQuery('STAFF')->countAllResults(),
+            'students' => $pendingQuery('STUDENT')->countAllResults(),
+        ];
+        $selectedRole = match ($filter) {
+            'faculty' => 'STAFF',
+            'students' => 'STUDENT',
+            default => null,
+        };
+        $pendingModel = $pendingQuery($selectedRole)
+            ->orderBy('reservations.reservation_id', 'DESC');
+        $pendingReservations = $pendingModel->paginate(5, 'pending_approvals');
+        $pager = $pendingModel->pager;
+        $pager->only(['department_id', 'filter', 'search']);
+
+        $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
+
+        return view('admin/dashboard', [
+            'departmentList' => $departmentList,
+            'selectedDepartmentId' => $selectedDepartmentId,
+            'userName' => $userName,
+            'userRole' => 'System Admin',
+            'search' => $search,
+            'filter' => $filter,
+            'equipmentStats' => [
+                'total' => $totalEquipment,
+                'growth' => $equipmentGrowth,
+                'activeReservations' => $activeReservations,
+                'ongoingBorrowings' => $ongoingBorrowings,
+                'dueToday' => $dueToday,
+                'pendingReturns' => $pendingReturns,
+                'overdueReturns' => $overdueReturns,
+            ],
+            'pendingReservations' => $pendingReservations,
+            'pendingCounts' => $pendingCounts,
+            'pager' => $pager,
+            'paginationDetails' => $pager->getDetails('pending_approvals'),
+        ]);
+    }
 
     public function index()
     {
@@ -54,14 +215,14 @@ class AdminController extends BaseController
         $reservation = $model->find($id);
 
         if (! $reservation || strtoupper($reservation['status']) !== 'PENDING' || ! in_array($status, ['APPROVED', 'REJECTED'], true)) {
-            return redirect()->to('admin/reservations')->with('error', 'That reservation cannot be updated.');
+            return redirect()->back()->with('error', 'That reservation cannot be updated.');
         }
 
         if (! $model->update($id, ['status' => $status])) {
-            return redirect()->to('admin/reservations')->with('error', 'Unable to update the reservation.');
+            return redirect()->back()->with('error', 'Unable to update the reservation.');
         }
 
-        return redirect()->to('admin/reservations')->with('success', 'Reservation ' . strtolower($status) . '.');
+        return redirect()->back()->with('success', 'Reservation ' . strtolower($status) . '.');
     }
 
     public function checkout($reservationId)
