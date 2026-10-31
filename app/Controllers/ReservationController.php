@@ -98,6 +98,45 @@ class ReservationController extends BaseController
         return view('reservations/show', ['reservation' => $reservation]);
     }
 
+    public function cancel($reservationId = null)
+    {
+        $reservationModel = new ReservationModel();
+        $reservation = $reservationModel
+            ->where('reservation_id', (int) $reservationId)
+            ->where('user_id', (int) session()->get('user_id'))
+            ->first();
+
+        if ($reservation === null || strtoupper((string) $reservation['status']) !== 'PENDING') {
+            return redirect()->to('reservations')->with('error', 'This reservation cannot be cancelled.');
+        }
+
+        if (! $reservationModel->update((int) $reservationId, ['status' => 'CANCELLED'])) {
+            return redirect()->to('reservations')->with('error', 'Could not cancel the reservation. Please try again.');
+        }
+
+        return redirect()->to('reservations')->with('success', 'Reservation cancelled successfully.');
+    }
+
+    public function delete($reservationId = null)
+    {
+        $reservationModel = new ReservationModel();
+        $reservation = $reservationModel
+            ->where('reservation_id', (int) $reservationId)
+            ->where('user_id', (int) session()->get('user_id'))
+            ->first();
+        $deletableStatuses = ['CANCELLED', 'REJECTED', 'RETURNED', 'COMPLETED'];
+
+        if ($reservation === null || ! in_array(strtoupper((string) $reservation['status']), $deletableStatuses, true)) {
+            return redirect()->to('reservations')->with('error', 'This reservation cannot be removed from your history.');
+        }
+
+        if (! $reservationModel->delete((int) $reservationId)) {
+            return redirect()->to('reservations')->with('error', 'Could not remove the reservation. Please try again.');
+        }
+
+        return redirect()->to('reservations')->with('success', 'Reservation removed from your history.');
+    }
+
     public function create($equipmentId = null)
     {
         if (! $equipmentId) {

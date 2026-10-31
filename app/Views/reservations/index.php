@@ -173,7 +173,22 @@ $reservationUrl = base_url('reservations') . ($baseQuery === [] ? '' : '?' . htt
                                         <td><?= esc(date('g:i A', strtotime((string) $res['start_time']))) ?> <span class="reservation-time-separator"> - </span> <?= esc(date('g:i A', strtotime((string) $res['end_time']))) ?></td>
                                         <td><span class="reservation-purpose" title="<?= esc($res['purpose']) ?>"><?= esc($res['purpose']) ?></span></td>
                                         <td><span class="reservation-status <?= $statusClass ?>"><?= esc(ucfirst(strtolower($status))) ?></span></td>
-                                        <td class="text-end"><button type="button" class="btn reservation-view-button" data-bs-toggle="modal" data-bs-target="#reservationDetails<?= (int) $res['reservation_id'] ?>" aria-label="View reservation <?= (int) $res['reservation_id'] ?>"><i class="bi bi-eye" aria-hidden="true"></i></button></td>
+                                        <td class="text-end">
+                                            <div class="reservation-row-actions">
+                                                <button type="button" class="btn reservation-view-button" data-bs-toggle="modal" data-bs-target="#reservationDetails<?= (int) $res['reservation_id'] ?>" aria-label="View reservation <?= (int) $res['reservation_id'] ?>" title="View details"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                                                <?php if ($status === 'PENDING'): ?>
+                                                    <form action="<?= base_url('reservations/' . (int) $res['reservation_id'] . '/cancel') ?>" method="post" onsubmit="return confirm('Cancel this reservation request?')">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm reservation-action-button" aria-label="Cancel reservation" title="Cancel reservation"><i class="bi bi-x-circle" aria-hidden="true"></i></button>
+                                                    </form>
+                                                <?php elseif (in_array($status, ['CANCELLED', 'REJECTED', 'RETURNED', 'COMPLETED'], true)): ?>
+                                                    <form action="<?= base_url('reservations/' . (int) $res['reservation_id'] . '/delete') ?>" method="post" onsubmit="return confirm('Are you sure you want to remove this record from your history?')">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm reservation-action-button" aria-label="Delete reservation from history" title="Delete from history"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>

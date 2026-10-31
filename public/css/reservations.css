@@ -139,6 +139,26 @@
     color: #155de1;
 }
 
+.reservation-row-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.reservation-row-actions form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.reservation-action-button {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border-radius: 9px;
+}
+
 .reservation-table-card {
     overflow: hidden;
     border: 1px solid #e0e7f0;

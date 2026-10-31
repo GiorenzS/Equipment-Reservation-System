@@ -25,6 +25,8 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('reservations/(:num)', 'ReservationController::show/$1');
     $routes->get('reservations/create/(:num)', 'ReservationController::create/$1');
     $routes->post('reservations/store', 'ReservationController::store');
+    $routes->post('reservations/(:num)/cancel', 'ReservationController::cancel/$1');
+    $routes->post('reservations/(:num)/delete', 'ReservationController::delete/$1');
 
     $routes->group('admin', ['filter' => 'admin'], static function ($routes) {
         $routes->get('reservations', 'AdminController::index');
