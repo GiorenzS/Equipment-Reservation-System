@@ -30,7 +30,7 @@ $endTime = (string) ($reservation['end_time'] ?? '');
             </div>
             <div class="modal-body">
                 <section class="reservation-detail-equipment" aria-label="Reserved equipment">
-                    <span class="reservation-detail-equipment-icon"><img src="<?= esc(equipment_image_url($reservation['image'] ?? null)) ?>" alt="<?= esc($equipmentName) ?>"></span>
+                    <span class="reservation-detail-equipment-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
                     <div class="reservation-detail-equipment-copy">
                         <span class="reservation-selected-label">Equipment</span>
                         <strong><?= esc($equipmentName) ?></strong>

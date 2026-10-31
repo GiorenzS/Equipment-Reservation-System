@@ -35,8 +35,7 @@ $queueUrl = static function (string $selectedFilter) use ($selectedDepartmentId,
     return base_url('admin') . '?' . http_build_query($query);
 };
 $growth = $equipmentStats['growth'];
-$growthClass = $growth === null || $growth >= 0 ? 'admin-kpi-pill-green' : 'admin-kpi-pill-red';
-$growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%%', $growth);
+$growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last month', $growth);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +74,7 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%%', $growth);
 
             <div class="dropdown dashboard-department-dropdown">
                 <button class="dashboard-profile dashboard-department-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Choose department">
-                    <i class="bi bi-buildings" aria-hidden="true"></i><span class="dashboard-department-name"><?= esc($selectedDepartmentName) ?></span>
+                    <span class="dashboard-department-name"><?= esc($selectedDepartmentName) ?></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end dashboard-profile-menu dashboard-department-menu">
                     <?php if (empty($departmentList)): ?>
@@ -114,23 +113,11 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%%', $growth);
             <?php endif; ?>
         <?php endforeach; ?>
 
-        <section class="admin-kpi-grid" aria-label="System summary">
-            <article class="admin-kpi-card">
-                <div class="admin-kpi-top"><span class="admin-kpi-icon admin-kpi-icon-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span><span class="admin-kpi-pill <?= $growthClass ?>"><?= esc($growthLabel) ?></span></div>
-                <strong><?= esc((string) $equipmentStats['total']) ?></strong><span class="admin-kpi-label">Total Equipment</span><small>in selected department</small>
-            </article>
-            <article class="admin-kpi-card">
-                <div class="admin-kpi-top"><span class="admin-kpi-icon admin-kpi-icon-blue"><i class="bi bi-calendar-check" aria-hidden="true"></i></span><span class="admin-kpi-pill admin-kpi-pill-blue">Active</span></div>
-                <strong><?= esc((string) $equipmentStats['activeReservations']) ?></strong><span class="admin-kpi-label">Active Reservations</span><small>pending or approved</small>
-            </article>
-            <article class="admin-kpi-card">
-                <div class="admin-kpi-top"><span class="admin-kpi-icon admin-kpi-icon-blue"><i class="bi bi-arrow-left-right" aria-hidden="true"></i></span><span class="admin-kpi-pill admin-kpi-pill-blue"><?= esc((string) $equipmentStats['dueToday']) ?> Due Today</span></div>
-                <strong><?= esc((string) $equipmentStats['ongoingBorrowings']) ?></strong><span class="admin-kpi-label">Ongoing Borrowings</span><small>checked out equipment</small>
-            </article>
-            <article class="admin-kpi-card">
-                <div class="admin-kpi-top"><span class="admin-kpi-icon admin-kpi-icon-red"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span><span class="admin-kpi-pill admin-kpi-pill-red" title="Unreturned past due or returned after the expected time"><?= esc((string) $equipmentStats['overdueReturns']) ?> Overdue</span></div>
-                <strong><?= esc((string) $equipmentStats['pendingReturns']) ?></strong><span class="admin-kpi-label">Pending Returns</span><small>due today or earlier</small>
-            </article>
+        <section class="catalog-stats admin-dashboard-stats" aria-label="System summary">
+            <article class="catalog-stat"><span class="catalog-stat-icon stat-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small><?= esc($growthLabel) ?></small></div></article>
+            <article class="catalog-stat"><span class="catalog-stat-icon stat-green"><i class="bi bi-calendar-check" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Active Reservations</span><strong><?= esc((string) $equipmentStats['activeReservations']) ?></strong><small>pending or approved</small></div></article>
+            <article class="catalog-stat"><span class="catalog-stat-icon stat-amber"><i class="bi bi-arrow-left-right" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Ongoing Borrowings</span><strong><?= esc((string) $equipmentStats['ongoingBorrowings']) ?></strong><small><?= esc((string) $equipmentStats['dueToday']) ?> due today</small></div></article>
+            <article class="catalog-stat"><span class="catalog-stat-icon stat-red"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Pending Returns</span><strong><?= esc((string) $equipmentStats['pendingReturns']) ?></strong><small class="admin-overdue-note"><?= esc((string) $equipmentStats['overdueReturns']) ?> overdue</small></div></article>
         </section>
 
         <section class="admin-approval-card" aria-labelledby="approval-queue-title">
@@ -144,28 +131,28 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%%', $growth);
             </div>
 
             <div class="table-responsive">
-                <table class="table admin-approval-table align-middle mb-0">
-                    <thead><tr><th scope="col">Reservation ID</th><th scope="col">Requester</th><th scope="col">Requested Equipment</th><th scope="col">Reservation Period</th><th scope="col">Purpose</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                <table class="table table-striped admin-approval-table align-middle mb-0">
+                    <thead><tr><th scope="col">User</th><th scope="col">Equipment</th><th scope="col">Date</th><th scope="col">Time</th><th scope="col">Purpose</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                     <tbody>
                         <?php if (empty($pendingReservations)): ?>
-                            <tr><td colspan="7" class="admin-queue-empty"><i class="bi bi-inbox" aria-hidden="true"></i><strong>No pending requests</strong><span>There are no reservation requests matching this filter.</span></td></tr>
+                            <tr><td colspan="7" class="text-center text-muted py-4">No reservations found.</td></tr>
                         <?php else: foreach ($pendingReservations as $reservation): ?>
                             <?php
                                 $requesterName = trim((string) ($reservation['first_name'] ?? '') . ' ' . (string) ($reservation['last_name'] ?? '')) ?: (string) $reservation['id_number'];
                                 $requesterRole = strtoupper((string) ($reservation['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
                             ?>
                             <tr>
-                                <td><span class="admin-reservation-id">RES-<?= esc(str_pad((string) $reservation['reservation_id'], 6, '0', STR_PAD_LEFT)) ?></span></td>
                                 <td><strong class="admin-requester-name"><?= esc($requesterName) ?></strong><small class="admin-requester-meta"><?= esc($requesterRole) ?> · ID <?= esc($reservation['id_number']) ?></small></td>
                                 <td><strong class="admin-equipment-name"><?= esc($reservation['equipment_name']) ?></strong><small class="admin-equipment-code"><?= esc($reservation['equipment_code']) ?></small></td>
-                                <td><strong><?= esc(date('M j, Y', strtotime((string) $reservation['reservation_date']))) ?></strong><small class="admin-requester-meta"><?= esc(date('g:i A', strtotime((string) $reservation['start_time']))) ?> – <?= esc(date('g:i A', strtotime((string) $reservation['end_time']))) ?></small></td>
-                                <td><span class="admin-purpose" title="<?= esc($reservation['purpose']) ?>"><?= esc($reservation['purpose']) ?></span></td>
-                                <td><span class="admin-pending-badge"><i></i>Pending Approval</span></td>
+                                <td><?= esc($reservation['reservation_date']) ?></td>
+                                <td><?= esc($reservation['start_time']) ?>–<?= esc($reservation['end_time']) ?></td>
+                                <td><?= esc($reservation['purpose']) ?></td>
+                                <td><?= esc($reservation['status']) ?></td>
                                 <td class="text-end text-nowrap">
-                                    <?php foreach (['APPROVED' => 'success', 'REJECTED' => 'outline-danger'] as $status => $style): ?>
+                                    <?php foreach (['APPROVED' => 'success', 'REJECTED' => 'danger'] as $status => $style): ?>
                                         <form class="d-inline" method="post" action="<?= base_url('admin/reservations/' . (int) $reservation['reservation_id'] . '/status/' . strtolower($status)) ?>">
                                             <?= csrf_field() ?>
-                                            <button class="btn btn-<?= $style ?> btn-sm admin-queue-action"><i class="bi <?= $status === 'APPROVED' ? 'bi-check-lg' : 'bi-x-lg' ?>" aria-hidden="true"></i><?= $status === 'APPROVED' ? 'Approve' : 'Reject' ?></button>
+                                            <button class="btn btn-<?= $style ?> btn-sm"><?= ucfirst(strtolower($status)) ?></button>
                                         </form>
                                     <?php endforeach; ?>
                                 </td>
