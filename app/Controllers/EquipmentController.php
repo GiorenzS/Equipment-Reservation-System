@@ -8,7 +8,7 @@ use App\Models\EquipmentModel;
 
 class EquipmentController extends BaseController
 {
-    protected $helpers = ['url', 'equipment'];
+    protected $helpers = ['url', 'equipment', 'form'];
 
     public function index()
     {

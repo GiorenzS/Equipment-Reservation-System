@@ -27,11 +27,11 @@ $equipmentName = trim((string) ($reservation['equipment_name'] ?? 'Equipment') .
             <h1>Reservation Details</h1>
             <dl class="reservation-detail-grid">
                 <div><dt>Equipment</dt><dd><?= esc($equipmentName) ?></dd></div>
-                <div><dt>Asset Tag</dt><dd><?= esc($reservation['equipment_code'] ?? '—') ?></dd></div>
+                <div><dt>Asset Tag</dt><dd><?= esc($reservation['equipment_code'] ?? 'ï¿½') ?></dd></div>
                 <div><dt>Category</dt><dd><?= esc($reservation['category_name'] ?? 'Uncategorized') ?></dd></div>
                 <div><dt>Status</dt><dd><span class="reservation-status <?= $statusClass ?>"><?= esc(ucfirst(strtolower($status))) ?></span></dd></div>
                 <div><dt>Reservation Date</dt><dd><?= esc(date('M j, Y', strtotime((string) $reservation['reservation_date']))) ?></dd></div>
-                <div><dt>Time</dt><dd><?= esc(date('g:i A', strtotime((string) $reservation['start_time']))) ?> – <?= esc(date('g:i A', strtotime((string) $reservation['end_time']))) ?></dd></div>
+                <div><dt>Time</dt><dd><?= esc(date('g:i A', strtotime((string) $reservation['start_time']))) ?> - <?= esc(date('g:i A', strtotime((string) $reservation['end_time']))) ?></dd></div>
                 <div class="grid-column-span"><dt>Purpose</dt><dd><?= esc($reservation['purpose']) ?></dd></div>
             </dl>
         </section>

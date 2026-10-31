@@ -37,6 +37,7 @@ $to = min($currentPage * $perPage, $total);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/catalog.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('css/reservations.css') ?>" rel="stylesheet">
 </head>
 <body class="dashboard-page catalog-page">
     <aside class="dashboard-sidebar">
@@ -156,7 +157,7 @@ $to = min($currentPage * $perPage, $total);
                                     <div class="catalog-item-footer">
                                         <div class="catalog-item-state"><span class="catalog-item-status <?= $statusClass ?>"><i></i><?= esc(ucwords(strtolower(str_replace('_', ' ', $status)))) ?></span><span class="catalog-item-condition <?= $conditionClass ?>"><i></i><?= esc(ucwords(strtolower($condition))) ?></span></div>
                                         <?php if ($status === 'AVAILABLE'): ?>
-                                            <a href="<?= base_url('reservations/create/' . (int) $item['equipment_id']) ?>" class="btn btn-primary catalog-reserve-button"><i class="bi bi-calendar2-plus" aria-hidden="true"></i><span>Reserve</span></a>
+                                            <button type="button" class="btn btn-primary catalog-reserve-button" data-bs-toggle="modal" data-bs-target="#reservationModal<?= (int) $item['equipment_id'] ?>"><i class="bi bi-calendar2-plus" aria-hidden="true"></i><span>Reserve</span></button>
                                         <?php else: ?>
                                             <button type="button" class="btn btn-primary catalog-reserve-button" disabled><i class="bi bi-calendar2-plus" aria-hidden="true"></i><span>Reserve</span></button>
                                         <?php endif; ?>
@@ -164,6 +165,9 @@ $to = min($currentPage * $perPage, $total);
                                 </div>
                             </article>
                         </div>
+                        <?php if ($status === 'AVAILABLE'): ?>
+                            <?= view('reservations/modal_create', ['equipment' => $item]) ?>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -174,5 +178,10 @@ $to = min($currentPage * $perPage, $total);
         </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.reservation-create-modal[data-auto-open="true"]').forEach((modal) => {
+            bootstrap.Modal.getOrCreateInstance(modal).show();
+        });
+    </script>
 </body>
 </html>
