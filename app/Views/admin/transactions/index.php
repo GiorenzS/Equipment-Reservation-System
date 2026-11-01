@@ -22,6 +22,15 @@ foreach ($departmentList as $department) {
 }
 
 $now = date('Y-m-d H:i:s');
+
+$allowedQueues = ['all', 'pending', 'checkout', 'active', 'overdue', 'returned'];
+
+$selectedQueue = service('request')->getGet('queue') ?? 'all';
+
+if (!in_array($selectedQueue, $allowedQueues, true)) {
+    $selectedQueue = 'all';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,35 +133,53 @@ $now = date('Y-m-d H:i:s');
             </div>
         </section>
 
-        <!-- Queue Tabs -->
-        <div class="admin-tx-tabs-row">
-            <nav class="admin-tx-nav-tabs" aria-label="Transaction queues navigation">
-                <button type="button" class="admin-tx-tab-btn active" data-filter-queue="all">
-                    <span>All Queues</span>
-                </button>
-                <button type="button" class="admin-tx-tab-btn" data-filter-queue="pending">
-                    <span>Pending Approvals</span>
-                    <span class="tab-count"><?= (int) ($counts['pending'] ?? 0) ?></span>
-                </button>
-                <button type="button" class="admin-tx-tab-btn" data-filter-queue="checkout">
-                    <span>Awaiting Checkout</span>
-                    <span class="tab-count"><?= (int) ($counts['checkout'] ?? 0) ?></span>
-                </button>
-                <button type="button" class="admin-tx-tab-btn" data-filter-queue="active">
-                    <span>Active Borrowings</span>
-                    <span class="tab-count"><?= (int) ($counts['active'] ?? 0) ?></span>
-                </button>
-                <button type="button" class="admin-tx-tab-btn" data-filter-queue="overdue">
-                    <span>Pending Returns</span>
-                    <span class="tab-count"><?= (int) ($counts['overdue'] ?? 0) ?></span>
-                </button>
-                <button type="button" class="admin-tx-tab-btn" data-filter-queue="returned">
-                    <span>Return History</span>
-                    <span class="tab-count"><?= (int) ($counts['returned'] ?? 0) ?></span>
-                </button>
-            </nav>
-        </div>
+            <!-- Queue Tabs -->
+            <div class="admin-tx-tabs-row">
+                <nav class="admin-tx-nav-tabs" aria-label="Transaction queues navigation">
 
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'all' ? 'active' : '' ?>"
+                            data-filter-queue="all">
+                        <span>All Queues</span>
+                    </button>
+
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'pending' ? 'active' : '' ?>"
+                            data-filter-queue="pending">
+                        <span>Pending Approvals</span>
+                        <span class="tab-count"><?= (int) ($counts['pending'] ?? 0) ?></span>
+                    </button>
+
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'checkout' ? 'active' : '' ?>"
+                            data-filter-queue="checkout">
+                        <span>Awaiting Checkout</span>
+                        <span class="tab-count"><?= (int) ($counts['checkout'] ?? 0) ?></span>
+                    </button>
+
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'active' ? 'active' : '' ?>"
+                            data-filter-queue="active">
+                        <span>Active Borrowings</span>
+                        <span class="tab-count"><?= (int) ($counts['active'] ?? 0) ?></span>
+                    </button>
+
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'overdue' ? 'active' : '' ?>"
+                            data-filter-queue="overdue">
+                        <span>Pending Returns</span>
+                        <span class="tab-count"><?= (int) ($counts['overdue'] ?? 0) ?></span>
+                    </button>
+
+                    <button type="button"
+                            class="admin-tx-tab-btn <?= $selectedQueue === 'returned' ? 'active' : '' ?>"
+                            data-filter-queue="returned">
+                        <span>Return History</span>
+                        <span class="tab-count"><?= (int) ($counts['returned'] ?? 0) ?></span>
+                    </button>
+
+                </nav>
+            </div>
         <!-- 1. Pending Approvals Queue -->
         <section class="admin-tx-card" id="pending-section" data-queue="pending">
             <div class="admin-tx-card-header">
@@ -572,33 +599,64 @@ $now = date('Y-m-d H:i:s');
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Interactive queue filter tabs
+        // Queue selected from the URL
+        const initialQueue = <?= json_encode($selectedQueue) ?>;
+
+        // Apply queue filter
+        function applyQueueFilter(filter) {
+
+            // Update active tab
+            document.querySelectorAll('.admin-tx-tab-btn').forEach(btn => {
+                btn.classList.toggle(
+                    'active',
+                    btn.getAttribute('data-filter-queue') === filter
+                );
+            });
+
+            // Show only matching transaction card
+            document.querySelectorAll('.admin-tx-card').forEach(card => {
+                const cardQueue = card.getAttribute('data-queue');
+
+                if (filter === 'all' || cardQueue === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Queue tab click events
         document.querySelectorAll('.admin-tx-tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.admin-tx-tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
                 const filter = btn.getAttribute('data-filter-queue');
-                document.querySelectorAll('.admin-tx-card').forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-queue') === filter) {
-                        card.style.display = '';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
+                applyQueueFilter(filter);
             });
         });
 
-        // Pill links in banner
+        // Banner pill click events
         document.querySelectorAll('.admin-tx-pill[data-tab]').forEach(pill => {
             pill.addEventListener('click', (e) => {
-                const targetTab = pill.getAttribute('data-tab');
-                const matchingBtn = document.querySelector(`.admin-tx-tab-btn[data-filter-queue="${targetTab}"]`);
-                if (matchingBtn) {
-                    matchingBtn.click();
+                e.preventDefault();
+
+                const targetQueue = pill.getAttribute('data-tab');
+                applyQueueFilter(targetQueue);
+
+                // Scroll to the selected transaction section
+                const targetSection = document.querySelector(
+                    `.admin-tx-card[data-queue="${targetQueue}"]`
+                );
+
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
+
+        // IMPORTANT: Apply the URL-selected queue when the page first loads
+        applyQueueFilter(initialQueue);
     </script>
 </body>
 </html>
