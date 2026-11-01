@@ -362,11 +362,18 @@ class AdminController extends BaseController
             ->orderBy('borrow_transactions.actual_return_date', 'DESC')
             ->findAll(10);
 
+        $overdueTransactions = $txQuery()
+            ->where('borrow_transactions.status', 'CHECKED_OUT')
+            ->where('borrow_transactions.expected_return_date <', date('Y-m-d H:i:s'))
+            ->orderBy('borrow_transactions.expected_return_date', 'ASC')
+            ->findAll();
+
         $counts = [
             'pending'  => count($reservations),
             'checkout' => count($approvedReservations),
             'active'   => count($transactions),
             'returned' => count($returnedHistory),
+            'overdue'  => count($overdueTransactions),
         ];
 
         $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
@@ -381,6 +388,7 @@ class AdminController extends BaseController
             'approvedReservations' => $approvedReservations,
             'transactions'         => $transactions,
             'returnedHistory'      => $returnedHistory,
+            'overdueTransactions'  => $overdueTransactions,
             'counts'               => $counts,
         ]);
     }

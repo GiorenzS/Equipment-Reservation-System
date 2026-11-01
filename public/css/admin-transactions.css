@@ -420,3 +420,46 @@
     }
 }
 
+/* ── Pending Returns / Overdue Tab ─────────────────────────────── */
+
+/* Banner pill — red variant */
+.admin-tx-pill.pill-red {
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.admin-tx-pill.pill-red:hover {
+    background: #fff5f5;
+    border-color: #dc2626;
+    color: #b91c1c;
+}
+
+.admin-tx-pill.pill-red span.badge-num {
+    background: #ef4444;
+}
+
+/* Tab count — danger highlight */
+.admin-tx-tab-btn .tab-count-danger {
+    color: #ef4444;
+}
+
+.admin-tx-tab-btn.active .tab-count-danger {
+    color: #dc2626;
+}
+
+/* Card title icon colour */
+.admin-tx-card-title.title-overdue i {
+    color: #ef4444;
+}
+
+/* Overdue row tint */
+tr.table-danger-row > td {
+    background: #fff7f7;
+}
+
+/* Avatar with danger tint */
+.admin-user-avatar.avatar-danger {
+    background: #fecaca;
+    color: #dc2626;
+}
+

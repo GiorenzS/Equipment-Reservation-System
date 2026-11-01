@@ -9,6 +9,7 @@
  * @var array $approvedReservations
  * @var array $transactions
  * @var array $returnedHistory
+ * @var array $overdueTransactions
  * @var array $counts
  */
 
@@ -117,6 +118,10 @@ $now = date('Y-m-d H:i:s');
                 <a href="#active-section" class="admin-tx-pill pill-green" data-tab="active">
                     <span>Active Checkouts</span>
                 </a>
+                <a href="#overdue-section" class="admin-tx-pill pill-red" data-tab="overdue">
+                    <span>Pending Returns</span>
+                    <span class="badge-num"><?= (int) ($counts['overdue'] ?? 0) ?></span>
+                </a>
             </div>
         </section>
 
@@ -137,6 +142,11 @@ $now = date('Y-m-d H:i:s');
                 <button type="button" class="admin-tx-tab-btn" data-filter-queue="active">
                     <span>Active Borrowings</span>
                     <span class="tab-count"><?= (int) ($counts['active'] ?? 0) ?></span>
+                </button>
+                <button type="button" class="admin-tx-tab-btn" data-filter-queue="overdue">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-1" aria-hidden="true"></i>
+                    <span>Pending Returns</span>
+                    <span class="tab-count tab-count-danger"><?= (int) ($counts['overdue'] ?? 0) ?></span>
                 </button>
                 <button type="button" class="admin-tx-tab-btn" data-filter-queue="returned">
                     <span>Return History</span>
@@ -408,7 +418,94 @@ $now = date('Y-m-d H:i:s');
             </div>
         </section>
 
-        <!-- 4. Recent Return History -->
+        <!-- 4. Pending Returns — Overdue -->
+        <section class="admin-tx-card" id="overdue-section" data-queue="overdue">
+            <div class="admin-tx-card-header">
+                <div>
+                    <h2 class="admin-tx-card-title title-overdue">
+                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        <span>Pending Returns &ndash; Overdue</span>
+                        <span class="badge rounded-pill bg-danger ms-2 small"><?= count($overdueTransactions ?? []) ?></span>
+                    </h2>
+                    <p class="admin-tx-card-meta">Items past their expected return date still in borrower custody.</p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table admin-tx-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Borrower</th>
+                            <th scope="col">Equipment</th>
+                            <th scope="col">Condition Out</th>
+                            <th scope="col">Borrowed Time</th>
+                            <th scope="col">Expected Return</th>
+                            <th scope="col" class="text-end">Record Return</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($overdueTransactions)): ?>
+                            <tr>
+                                <td colspan="6">
+                                    <div class="admin-tx-empty">
+                                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                                        <h5>No Overdue Items</h5>
+                                        <p>All borrowed equipment has been returned on time.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php else: foreach ($overdueTransactions as $tx): ?>
+                            <?php
+                                $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
+                                $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
+                                $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
+                            ?>
+                            <tr class="table-danger-row">
+                                <td>
+                                    <div class="admin-user-cell">
+                                        <span class="admin-user-avatar avatar-danger"><?= esc($initial) ?></span>
+                                        <div class="admin-user-info">
+                                            <strong><?= esc($borrowerName) ?></strong>
+                                            <small><?= esc($borrowerRole) ?> · ID <?= esc($tx['id_number']) ?></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="admin-equipment-info">
+                                        <strong><?= esc($tx['equipment_name']) ?></strong>
+                                        <small><?= esc($tx['equipment_code']) ?></small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border"><?= esc($tx['condition_out'] ?? 'GOOD') ?></span>
+                                </td>
+                                <td><?= esc($tx['borrow_date']) ?></td>
+                                <td>
+                                    <span class="text-danger fw-semibold"><?= esc($tx['expected_return_date']) ?></span>
+                                    <span class="admin-badge-status badge-overdue ms-1"><i class="bg-danger"></i>Overdue</span>
+                                </td>
+                                <td class="text-end">
+                                    <form class="admin-return-form justify-content-end" method="post" action="<?= base_url('admin/transactions/' . (int) $tx['transaction_id'] . '/return') ?>">
+                                        <?= csrf_field() ?>
+                                        <select class="form-select admin-return-select" name="condition_in" required aria-label="Return condition">
+                                            <option value="">Condition...</option>
+                                            <option value="GOOD">Good</option>
+                                            <option value="FAIR">Fair</option>
+                                            <option value="DAMAGED">Damaged</option>
+                                        </select>
+                                        <button class="btn btn-danger admin-return-btn">
+                                            <i class="bi bi-box-arrow-in-left" aria-hidden="true"></i>Return
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 5. Recent Return History -->
         <section class="admin-tx-card" id="history-section" data-queue="returned">
             <div class="admin-tx-card-header">
                 <div>
@@ -446,6 +543,7 @@ $now = date('Y-m-d H:i:s');
                                 $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
                                 $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
                                 $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
+                                $overdueAgo = ! empty($tx['expected_return_date']) ? human_date(date('Y-m-d H:i:s', strtotime($tx['expected_return_date']))) : '';
                             ?>
                             <tr>
                                 <td>
