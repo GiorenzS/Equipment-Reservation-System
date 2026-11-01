@@ -1,0 +1,388 @@
+/* Admin Equipment Inventory Styling */
+
+.admin-inventory-page .dashboard-main {
+    max-width: 1900px;
+}
+
+/* Page Header */
+.admin-inventory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.admin-inventory-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-inventory-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.admin-inventory-title-row h1 {
+    margin: 0;
+    color: #101c30;
+    font-size: 1.65rem;
+    font-weight: 750;
+    letter-spacing: -.03em;
+}
+
+.admin-assets-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #eaf2ff;
+    color: #2463eb;
+    font-size: .8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.admin-inventory-subtitle {
+    margin: 0;
+    color: #728096;
+    font-size: .88rem;
+}
+
+.btn-add-equipment {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #2463eb;
+    color: #fff;
+    font-size: .88rem;
+    font-weight: 650;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(36, 99, 235, 0.22);
+    transition: background-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    white-space: nowrap;
+}
+
+.btn-add-equipment:hover {
+    background: #1d4ed8;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(36, 99, 235, 0.28);
+}
+
+/* Card Container */
+.admin-inventory-card {
+    border: 1px solid #dfe5ef;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(20, 39, 66, .04);
+    padding: 24px 24px 20px;
+    margin-bottom: 24px;
+}
+
+/* Toolbar / Filter Row */
+.admin-inventory-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f1f4f9;
+}
+
+.admin-inventory-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #101c30;
+    font-size: 1.28rem;
+    font-weight: 750;
+    letter-spacing: -.02em;
+    margin: 0;
+}
+
+.admin-inventory-heading i {
+    color: #2463eb;
+    font-size: 1.35rem;
+}
+
+.admin-inventory-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-search-field {
+    display: flex;
+    min-width: 220px;
+    height: 42px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border: 1px solid #e1e7f0;
+    border-radius: 12px;
+    background: #fff;
+    color: #8391a7;
+    transition: border-color .15s ease;
+}
+
+.admin-search-field:focus-within {
+    border-color: #2463eb;
+    box-shadow: 0 0 0 3px rgba(36, 99, 235, 0.1);
+}
+
+.admin-search-field input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #101c30;
+    font-size: .86rem;
+}
+
+.admin-filter-select {
+    min-height: 42px;
+    min-width: 130px;
+    padding: 0 32px 0 12px;
+    border: 1px solid #e1e7f0;
+    border-radius: 12px;
+    background-color: #fff;
+    color: #43516a;
+    font-size: .85rem;
+    font-weight: 550;
+    box-shadow: 0 1px 3px rgba(20, 39, 66, .03);
+    transition: border-color .15s ease;
+}
+
+.admin-filter-select:focus {
+    border-color: #2463eb;
+    box-shadow: 0 0 0 3px rgba(36, 99, 235, 0.1);
+}
+
+.admin-filter-btn {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    border: 1px solid #e1e7f0;
+    border-radius: 12px;
+    background: #fff;
+    color: #64748b;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.admin-filter-btn:hover {
+    background: #f8fafc;
+    color: #2463eb;
+    border-color: #cbd5e1;
+}
+
+/* Card Visuals and Badge Variations */
+.admin-inventory-grid .catalog-item-card {
+    border: 1px solid #e6edf6;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(20, 39, 66, .03);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.admin-inventory-grid .catalog-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(20, 39, 66, .07);
+}
+
+.admin-inventory-grid .catalog-item-image {
+    height: 160px;
+    margin: 14px 14px 0;
+    border-radius: 12px;
+}
+
+.admin-inventory-grid .catalog-item-body {
+    padding: 14px 16px 15px;
+}
+
+/* Category Badge Colors */
+.cat-badge {
+    display: inline-flex;
+    max-width: max-content;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 13px;
+    padding: 5px 11px;
+    border-radius: 16px;
+    font-size: .74rem;
+    font-weight: 650;
+    letter-spacing: .01em;
+}
+
+.cat-computers {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.cat-av {
+    background: #f5edfd;
+    color: #9333ea;
+}
+
+.cat-photo {
+    background: #e0f6f9;
+    color: #0284c7;
+}
+
+.cat-audio {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.cat-tools {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.cat-office {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.cat-default {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* Card Footer and Manage Action */
+.admin-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #f1f4f8;
+}
+
+.admin-card-state {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-card-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .74rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.admin-card-indicator i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Status colors */
+.state-available { color: #10b981; }
+.state-reserved { color: #f59e0b; }
+.state-in-use { color: #2563eb; }
+.state-other { color: #64748b; }
+
+/* Condition colors */
+.state-good, .state-excellent { color: #10b981; }
+.state-fair { color: #f59e0b; }
+.state-damaged { color: #ef4444; }
+
+/* Manage Action Button */
+.admin-manage-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: #334155;
+    font-size: .76rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: background-color .15s ease, color .15s ease;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.admin-manage-btn:hover {
+    background: #eff6ff;
+    color: #2463eb;
+}
+
+.admin-manage-btn i {
+    font-size: .82rem;
+}
+
+/* Pagination Footer */
+.admin-inventory-card .catalog-pagination-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f4f9;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 991.98px) {
+    .admin-inventory-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .btn-add-equipment {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-inventory-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-inventory-filters {
+        width: 100%;
+    }
+
+    .admin-search-field {
+        flex: 1 1 100%;
+    }
+
+    .admin-filter-select {
+        flex: 1 1 calc(50% - 6px);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-inventory-card {
+        padding: 18px 14px;
+    }
+
+    .admin-filter-select {
+        flex: 1 1 100%;
+    }
+
+    .admin-filter-btn {
+        display: none;
+    }
+}
+

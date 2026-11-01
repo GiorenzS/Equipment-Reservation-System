@@ -12,6 +12,11 @@ class EquipmentController extends BaseController
 
     public function index()
     {
+        if (strtoupper((string) session()->get('role')) === 'ADMIN') {
+            $queryString = $this->request->getUri()->getQuery();
+            return redirect()->to(base_url('admin/equipment' . ($queryString !== '' ? '?' . $queryString : '')));
+        }
+
         $departmentList = (new DepartmentModel())->orderBy('department_name', 'ASC')->findAll();
         $departmentIds = array_map('intval', array_column($departmentList, 'department_id'));
         $assignedDepartmentId = (int) session()->get('department_id');

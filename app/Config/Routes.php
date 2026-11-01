@@ -30,6 +30,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
     $routes->get('admin', 'AdminController::dashboard', ['filter' => 'admin']);
     $routes->group('admin', ['filter' => 'admin'], static function ($routes) {
+        $routes->get('equipment', 'AdminController::equipment');
         $routes->get('reservations', 'AdminController::index');
         $routes->post('reservations/(:num)/status/(:segment)', 'AdminController::updateReservationStatus/$1/$2');
         $routes->post('reservations/(:num)/checkout', 'AdminController::checkout/$1');
