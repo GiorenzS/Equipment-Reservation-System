@@ -78,6 +78,19 @@
     text-overflow: ellipsis;
 }
 
+.catalog-profile-copy {
+    display: grid;
+    min-width: 0;
+    gap: 1px;
+    text-align: left;
+}
+
+.catalog-profile-copy small {
+    color: #748198;
+    font-size: .72rem;
+    font-weight: 500;
+}
+
 .catalog-avatar {
     display: grid;
     width: 34px;

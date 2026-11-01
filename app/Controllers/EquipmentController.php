@@ -94,6 +94,9 @@ class EquipmentController extends BaseController
         $equipmentList = $equipmentModel->paginate(8, 'catalog');
         $pager = $equipmentModel->pager;
 
+        $rawRole = strtoupper((string) session()->get('role'));
+        $userRole = $rawRole === 'ADMIN' ? 'System Admin' : ($rawRole === 'STAFF' ? 'Faculty / Staff' : 'Student');
+
         return view('equipment/catalog', [
             'equipmentList' => $equipmentList,
             'categories' => (new CategoryModel())->orderBy('category_name', 'ASC')->findAll(),
@@ -101,7 +104,7 @@ class EquipmentController extends BaseController
             'departmentList' => $departmentList,
             'selectedDepartmentId' => $selectedDepartmentId,
             'userName' => trim((string) session()->get('full_name')) ?: (string) session()->get('id_number'),
-            'userRole' => (string) session()->get('role'),
+            'userRole' => $userRole,
             'search' => $search,
             'categoryId' => $categoryId !== false && $categoryId > 0 ? $categoryId : null,
             'statusFilter' => $status,

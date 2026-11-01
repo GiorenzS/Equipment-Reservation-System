@@ -88,7 +88,7 @@ class AdminController extends BaseController
         $pager = $equipmentModel->pager;
 
         $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
-        $userRole = (string) $session->get('role');
+        $userRole = 'System Admin';
 
         return view('admin/equipment/index', [
             'equipmentList'        => $equipmentList,

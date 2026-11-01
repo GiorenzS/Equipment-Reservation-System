@@ -69,7 +69,6 @@ $to = min($currentPage * $perPage, $total);
 
             <div class="dropdown dashboard-department-dropdown">
                 <button class="dashboard-profile dashboard-department-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Choose department">
-                    <i class="bi bi-box-seam me-1" aria-hidden="true"></i>
                     <span class="dashboard-department-name"><?= esc($selectedDepartmentName) ?></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end dashboard-profile-menu dashboard-department-menu">
@@ -110,17 +109,20 @@ $to = min($currentPage * $perPage, $total);
             <?php endif; ?>
         <?php endforeach; ?>
 
-        <section class="admin-inventory-header">
-            <div class="admin-inventory-title-wrap">
-                <div class="admin-inventory-title-row">
-                    <h1>Equipment Management</h1>
-                    <span class="admin-assets-badge"><?= esc((string) $totalAssets) ?> Total Assets</span>
+        <section class="admin-inventory-banner" aria-labelledby="inventory-title">
+            <div class="admin-inventory-banner-content">
+                <span class="admin-inventory-banner-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+                <div>
+                    <div class="admin-inventory-title-row">
+                        <h1 id="inventory-title">Equipment Management</h1>
+                        <span class="admin-assets-badge"><?= esc((string) $totalAssets) ?> Total Assets</span>
+                    </div>
+                    <p>Manage assets, update condition grading, and edit catalog equipment</p>
                 </div>
-                <p class="admin-inventory-subtitle">Manage assets, update condition grading, and edit catalog equipment</p>
             </div>
             <a href="#" class="btn-add-equipment" data-bs-toggle="modal" data-bs-target="#addNewEquipmentModal" role="button">
-                <i class="bi bi-box-seam" aria-hidden="true"></i>
-                <span>+ Add New Equipment</span>
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                <span>Add New Equipment</span>
             </a>
         </section>
 
@@ -141,21 +143,21 @@ $to = min($currentPage * $perPage, $total);
                         <input type="search" name="search" value="<?= esc($search) ?>" placeholder="Search equipment..." aria-label="Search equipment">
                     </div>
 
-                    <select class="form-select admin-filter-select" name="category_id" onchange="this.form.submit()" aria-label="Filter by category">
+                    <select class="form-select admin-filter-select select-category" name="category_id" onchange="this.form.submit()" aria-label="Filter by category">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $category): ?>
                             <option value="<?= (int) $category['category_id'] ?>" <?= $categoryId === (int) $category['category_id'] ? 'selected' : '' ?>><?= esc($category['category_name']) ?></option>
                         <?php endforeach; ?>
                     </select>
 
-                    <select class="form-select admin-filter-select" name="status" onchange="this.form.submit()" aria-label="Filter by status">
+                    <select class="form-select admin-filter-select select-status" name="status" onchange="this.form.submit()" aria-label="Filter by status">
                         <option value="">All Status</option>
                         <option value="AVAILABLE" <?= $statusFilter === 'AVAILABLE' ? 'selected' : '' ?>>Available</option>
                         <option value="RESERVED" <?= $statusFilter === 'RESERVED' ? 'selected' : '' ?>>Reserved</option>
                         <option value="IN_USE" <?= $statusFilter === 'IN_USE' ? 'selected' : '' ?>>In Use</option>
                     </select>
 
-                    <select class="form-select admin-filter-select" name="condition" onchange="this.form.submit()" aria-label="Filter by condition">
+                    <select class="form-select admin-filter-select select-condition" name="condition" onchange="this.form.submit()" aria-label="Filter by condition">
                         <option value="">All Conditions</option>
                         <option value="GOOD" <?= $conditionFilter === 'GOOD' ? 'selected' : '' ?>>Good</option>
                         <option value="EXCELLENT" <?= $conditionFilter === 'EXCELLENT' ? 'selected' : '' ?>>Excellent</option>

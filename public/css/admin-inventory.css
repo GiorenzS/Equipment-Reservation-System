@@ -4,19 +4,36 @@
     max-width: 1900px;
 }
 
-/* Page Header */
-.admin-inventory-header {
+/* Equipment Management Banner Card (Styled like My Reservations card) */
+.admin-inventory-banner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 24px;
+    padding: 24px 26px;
+    border: 1px solid #bdd3ff;
+    border-radius: 18px;
+    background: #e8f1ff;
 }
 
-.admin-inventory-title-wrap {
+.admin-inventory-banner-content {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-inventory-banner-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    place-items: center;
+    border-radius: 14px;
+    background: #fff;
+    color: #1e62e8;
+    font-size: 1.45rem;
+    box-shadow: 0 2px 8px rgba(30, 98, 232, 0.08);
 }
 
 .admin-inventory-title-row {
@@ -26,30 +43,31 @@
     flex-wrap: wrap;
 }
 
-.admin-inventory-title-row h1 {
+.admin-inventory-banner h1 {
     margin: 0;
-    color: #101c30;
-    font-size: 1.65rem;
+    color: #13253c;
+    font-size: 1.5rem;
     font-weight: 750;
-    letter-spacing: -.03em;
+    letter-spacing: -0.025em;
+}
+
+.admin-inventory-banner p {
+    margin: 4px 0 0;
+    color: #61708a;
+    font-size: .88rem;
 }
 
 .admin-assets-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 12px;
+    padding: 3px 12px;
     border-radius: 20px;
-    background: #eaf2ff;
+    background: #fff;
+    border: 1px solid #bfdbfe;
     color: #2463eb;
-    font-size: .8rem;
+    font-size: .78rem;
     font-weight: 700;
     white-space: nowrap;
-}
-
-.admin-inventory-subtitle {
-    margin: 0;
-    color: #728096;
-    font-size: .88rem;
 }
 
 .btn-add-equipment {
@@ -91,9 +109,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
     padding-bottom: 18px;
     border-bottom: 1px solid #f1f4f9;
 }
@@ -103,10 +120,11 @@
     align-items: center;
     gap: 10px;
     color: #101c30;
-    font-size: 1.28rem;
+    font-size: 1.25rem;
     font-weight: 750;
     letter-spacing: -.02em;
     margin: 0;
+    white-space: nowrap;
 }
 
 .admin-inventory-heading i {
@@ -117,13 +135,14 @@
 .admin-inventory-filters {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 10px;
+    flex-wrap: nowrap;
 }
 
 .admin-search-field {
     display: flex;
-    min-width: 220px;
+    width: 220px;
+    min-width: 170px;
     height: 42px;
     align-items: center;
     gap: 10px;
@@ -133,6 +152,7 @@
     background: #fff;
     color: #8391a7;
     transition: border-color .15s ease;
+    flex-shrink: 1;
 }
 
 .admin-search-field:focus-within {
@@ -151,8 +171,9 @@
 }
 
 .admin-filter-select {
-    min-height: 42px;
+    width: auto !important;
     min-width: 130px;
+    height: 42px;
     padding: 0 32px 0 12px;
     border: 1px solid #e1e7f0;
     border-radius: 12px;
@@ -162,11 +183,24 @@
     font-weight: 550;
     box-shadow: 0 1px 3px rgba(20, 39, 66, .03);
     transition: border-color .15s ease;
+    flex-shrink: 0;
 }
 
 .admin-filter-select:focus {
     border-color: #2463eb;
     box-shadow: 0 0 0 3px rgba(36, 99, 235, 0.1);
+}
+
+.admin-filter-select.select-category {
+    min-width: 145px;
+}
+
+.admin-filter-select.select-status {
+    min-width: 120px;
+}
+
+.admin-filter-select.select-condition {
+    min-width: 140px;
 }
 
 .admin-filter-btn {
@@ -182,6 +216,7 @@
     font-size: 1.05rem;
     cursor: pointer;
     transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+    flex-shrink: 0;
 }
 
 .admin-filter-btn:hover {
@@ -196,6 +231,7 @@
     border-radius: 16px;
     box-shadow: 0 2px 6px rgba(20, 39, 66, .03);
     transition: transform .2s ease, box-shadow .2s ease;
+    background: #fff;
 }
 
 .admin-inventory-grid .catalog-item-card:hover {
@@ -207,10 +243,26 @@
     height: 160px;
     margin: 14px 14px 0;
     border-radius: 12px;
+    overflow: hidden;
+    background: #f1f4f9;
+}
+
+.admin-inventory-grid .catalog-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .2s ease;
+}
+
+.admin-inventory-grid .catalog-item-image:hover img {
+    transform: scale(1.035);
 }
 
 .admin-inventory-grid .catalog-item-body {
     padding: 14px 16px 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 /* Category Badge Colors */
@@ -269,8 +321,8 @@
     justify-content: space-between;
     gap: 8px;
     margin-top: auto;
-    padding-top: 10px;
-    border-top: 1px solid #f1f4f8;
+    padding-top: 12px;
+    border-top: 1px solid #edf2f7;
 }
 
 .admin-card-state {
@@ -312,7 +364,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 3px 8px;
+    padding: 4px 9px;
     border-radius: 7px;
     border: none;
     background: transparent;
@@ -342,37 +394,47 @@
 }
 
 /* Responsive Breakpoints */
-@media (max-width: 991.98px) {
-    .admin-inventory-header {
+@media (max-width: 1200px) {
+    .admin-inventory-toolbar {
         flex-direction: column;
         align-items: flex-start;
-        gap: 14px;
+        gap: 16px;
+    }
+
+    .admin-inventory-filters {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .admin-search-field {
+        flex: 1 1 200px;
+        width: auto;
+    }
+
+    .admin-filter-select {
+        flex: 1 1 130px;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .admin-inventory-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
     }
 
     .btn-add-equipment {
         width: 100%;
         justify-content: center;
     }
-
-    .admin-inventory-toolbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .admin-inventory-filters {
-        width: 100%;
-    }
-
-    .admin-search-field {
-        flex: 1 1 100%;
-    }
-
-    .admin-filter-select {
-        flex: 1 1 calc(50% - 6px);
-    }
 }
 
 @media (max-width: 575.98px) {
+    .admin-inventory-banner {
+        padding: 18px 16px;
+    }
+
     .admin-inventory-card {
         padding: 18px 14px;
     }
@@ -385,4 +447,3 @@
         display: none;
     }
 }
-

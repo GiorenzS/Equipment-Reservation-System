@@ -80,8 +80,8 @@ $to = min($currentPage * $perPage, $total);
             </div>
             <div class="dropdown">
                 <button class="catalog-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="catalog-avatar"><?= esc(strtoupper(substr($userName ?: 'U', 0, 1))) ?></span>
-                    <span class="catalog-profile-name"><?= esc($userName ?: 'User') ?></span>
+                    <span class="catalog-avatar"><?= esc(strtoupper(substr($userName ?: 'A', 0, 1))) ?></span>
+                    <span class="catalog-profile-copy"><strong class="catalog-profile-name"><?= esc($userName ?: 'Admin') ?></strong><small><?= esc($userRole) ?></small></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end catalog-profile-menu">
                     <li><span class="dropdown-item-text"><?= esc($userRole) ?></span></li>
