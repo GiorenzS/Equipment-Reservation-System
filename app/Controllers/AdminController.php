@@ -267,13 +267,57 @@ class AdminController extends BaseController
         ]);
     }
 
-    public function index()
+    public function transactions()
     {
-        $reservationQuery = static fn () => (new ReservationModel())
-            ->select('reservations.*, users.id_number, user_profiles.first_name, user_profiles.last_name, equipment.equipment_name, equipment.equipment_code, equipment.status AS equipment_status')
-            ->join('users', 'users.user_id = reservations.user_id')
-            ->join('user_profiles', 'user_profiles.user_id = users.user_id', 'left')
-            ->join('equipment', 'equipment.equipment_id = reservations.equipment_id');
+        $session = session();
+        $departmentList = (new DepartmentModel())->orderBy('department_name', 'ASC')->findAll();
+        $departmentIds = array_map('intval', array_column($departmentList, 'department_id'));
+        $assignedDepartmentId = (int) $session->get('department_id');
+        $requestedDepartment = filter_var($this->request->getGet('department_id'), FILTER_VALIDATE_INT);
+
+        if ($requestedDepartment !== false && in_array($requestedDepartment, $departmentIds, true)) {
+            $selectedDepartmentId = $requestedDepartment;
+        } elseif (in_array($assignedDepartmentId, $departmentIds, true)) {
+            $selectedDepartmentId = $assignedDepartmentId;
+        } else {
+            $selectedDepartmentId = $departmentIds[0] ?? null;
+        }
+
+        $search = $this->request->getGet('search');
+        $search = is_string($search) ? trim($search) : '';
+
+        $scopeDepartment = static function ($query) use ($selectedDepartmentId) {
+            if ($selectedDepartmentId !== null) {
+                $query->groupStart()
+                    ->where('equipment.department_id', $selectedDepartmentId)
+                    ->orWhere('equipment.department_id IS NULL', null, false)
+                    ->groupEnd();
+            }
+            return $query;
+        };
+
+        $reservationQuery = function () use ($scopeDepartment, $search) {
+            $model = (new ReservationModel())
+                ->select('reservations.*, users.id_number, users.role AS requester_role, user_profiles.first_name, user_profiles.last_name, equipment.equipment_name, equipment.equipment_code, equipment.status AS equipment_status')
+                ->join('users', 'users.user_id = reservations.user_id')
+                ->join('user_profiles', 'user_profiles.user_id = users.user_id', 'left')
+                ->join('equipment', 'equipment.equipment_id = reservations.equipment_id');
+
+            $scopeDepartment($model);
+
+            if ($search !== '') {
+                $model->groupStart()
+                    ->like('equipment.equipment_name', $search)
+                    ->orLike('equipment.equipment_code', $search)
+                    ->orLike('users.id_number', $search)
+                    ->orLike('user_profiles.first_name', $search)
+                    ->orLike('user_profiles.last_name', $search)
+                    ->orLike('reservations.purpose', $search)
+                    ->groupEnd();
+            }
+
+            return $model;
+        };
 
         $reservations = $reservationQuery()
             ->where('reservations.status', 'PENDING')
@@ -285,21 +329,65 @@ class AdminController extends BaseController
             ->orderBy('reservations.reservation_id', 'DESC')
             ->findAll();
 
-        $transactions = (new BorrowTransactionModel())
-            ->select('borrow_transactions.*, borrow_items.equipment_id, equipment.equipment_name, equipment.equipment_code, users.id_number, user_profiles.first_name, user_profiles.last_name')
-            ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
-            ->join('equipment', 'equipment.equipment_id = borrow_items.equipment_id')
-            ->join('users', 'users.user_id = borrow_transactions.user_id')
-            ->join('user_profiles', 'user_profiles.user_id = users.user_id', 'left')
+        $txQuery = function () use ($scopeDepartment, $search) {
+            $model = (new BorrowTransactionModel())
+                ->select('borrow_transactions.*, borrow_items.equipment_id, borrow_items.condition_out, equipment.equipment_name, equipment.equipment_code, users.id_number, users.role AS requester_role, user_profiles.first_name, user_profiles.last_name')
+                ->join('borrow_items', 'borrow_items.transaction_id = borrow_transactions.transaction_id')
+                ->join('equipment', 'equipment.equipment_id = borrow_items.equipment_id')
+                ->join('users', 'users.user_id = borrow_transactions.user_id')
+                ->join('user_profiles', 'user_profiles.user_id = users.user_id', 'left');
+
+            $scopeDepartment($model);
+
+            if ($search !== '') {
+                $model->groupStart()
+                    ->like('equipment.equipment_name', $search)
+                    ->orLike('equipment.equipment_code', $search)
+                    ->orLike('users.id_number', $search)
+                    ->orLike('user_profiles.first_name', $search)
+                    ->orLike('user_profiles.last_name', $search)
+                    ->groupEnd();
+            }
+
+            return $model;
+        };
+
+        $transactions = $txQuery()
             ->where('borrow_transactions.status', 'CHECKED_OUT')
             ->orderBy('borrow_transactions.transaction_id', 'DESC')
             ->findAll();
 
-        return view('admin/reservations/index', [
-            'reservations' => $reservations,
+        $returnedHistory = $txQuery()
+            ->where('borrow_transactions.status', 'RETURNED')
+            ->orderBy('borrow_transactions.actual_return_date', 'DESC')
+            ->findAll(10);
+
+        $counts = [
+            'pending'  => count($reservations),
+            'checkout' => count($approvedReservations),
+            'active'   => count($transactions),
+            'returned' => count($returnedHistory),
+        ];
+
+        $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
+
+        return view('admin/transactions/index', [
+            'departmentList'       => $departmentList,
+            'selectedDepartmentId' => $selectedDepartmentId,
+            'userName'             => $userName,
+            'userRole'             => 'System Admin',
+            'search'               => $search,
+            'reservations'         => $reservations,
             'approvedReservations' => $approvedReservations,
-            'transactions' => $transactions,
+            'transactions'         => $transactions,
+            'returnedHistory'      => $returnedHistory,
+            'counts'               => $counts,
         ]);
+    }
+
+    public function index()
+    {
+        return $this->transactions();
     }
 
     public function updateReservationStatus($id, $status)
@@ -323,13 +411,13 @@ class AdminController extends BaseController
     {
         $reservation = (new ReservationModel())->find($reservationId);
         if (! $reservation || strtoupper($reservation['status']) !== 'APPROVED') {
-            return redirect()->to('admin/reservations')->with('error', 'Only approved reservations can be checked out.');
+            return redirect()->to('admin/transactions')->with('error', 'Only approved reservations can be checked out.');
         }
 
         $equipmentModel = new EquipmentModel();
         $equipment = $equipmentModel->find($reservation['equipment_id']);
         if (! $equipment || strtoupper($equipment['status']) !== 'AVAILABLE') {
-            return redirect()->to('admin/reservations')->with('error', 'This equipment is not available for checkout.');
+            return redirect()->to('admin/transactions')->with('error', 'This equipment is not available for checkout.');
         }
 
         $now = date('Y-m-d H:i:s');
@@ -358,17 +446,17 @@ class AdminController extends BaseController
 
         if (! $transactionId || ! $itemId || ! $equipmentUpdated || ! $reservationUpdated || ! $db->transStatus()) {
             $db->transRollback();
-            return redirect()->to('admin/reservations')->with('error', 'Checkout failed. No checkout changes were saved.');
+            return redirect()->to('admin/transactions')->with('error', 'Checkout failed. No checkout changes were saved.');
         }
 
         $db->transCommit();
-        return redirect()->to('admin/reservations')->with('success', 'Equipment checked out.');
+        return redirect()->to('admin/transactions')->with('success', 'Equipment checked out.');
     }
 
     public function returnItem($transactionId)
     {
         if (! $this->validate(['condition_in' => 'required|in_list[GOOD,FAIR,DAMAGED]'])) {
-            return redirect()->to('admin/reservations')->with('error', 'Select the equipment condition on return.');
+            return redirect()->to('admin/transactions')->with('error', 'Select the equipment condition on return.');
         }
 
         $transactionModel = new BorrowTransactionModel();
@@ -377,7 +465,7 @@ class AdminController extends BaseController
         $item = $itemModel->where('transaction_id', $transactionId)->first();
 
         if (! $transaction || $transaction['status'] !== 'CHECKED_OUT' || ! $item || $item['returned_at'] !== null) {
-            return redirect()->to('admin/reservations')->with('error', 'That transaction is not awaiting return.');
+            return redirect()->to('admin/transactions')->with('error', 'That transaction is not awaiting return.');
         }
 
         $reservationModel = new ReservationModel();
@@ -401,7 +489,7 @@ class AdminController extends BaseController
         }
 
         if (! $reservation || ! in_array(strtoupper((string) $reservation['status']), ['APPROVED', 'CHECKED_OUT'], true)) {
-            return redirect()->to('admin/reservations')->with('error', 'The reservation linked to this checkout could not be verified.');
+            return redirect()->to('admin/transactions')->with('error', 'The reservation linked to this checkout could not be verified.');
         }
 
         $now = date('Y-m-d H:i:s');
@@ -425,10 +513,10 @@ class AdminController extends BaseController
 
         if (! $itemUpdated || ! $transactionUpdated || ! $equipmentUpdated || ! $reservationUpdated || ! $db->transStatus()) {
             $db->transRollback();
-            return redirect()->to('admin/reservations')->with('error', 'Return failed. No return changes were saved.');
+            return redirect()->to('admin/transactions')->with('error', 'Return failed. No return changes were saved.');
         }
 
         $db->transCommit();
-        return redirect()->to('admin/reservations')->with('success', 'Equipment return recorded.');
+        return redirect()->to('admin/transactions')->with('success', 'Equipment return recorded.');
     }
 }

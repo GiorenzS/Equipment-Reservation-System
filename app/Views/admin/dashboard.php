@@ -58,7 +58,7 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last mont
         <nav class="dashboard-nav" aria-label="Admin navigation">
             <a href="<?= base_url('admin') ?>" class="dashboard-nav-link active" aria-current="page"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Dashboard</span></a>
             <a href="<?= base_url('admin/equipment') ?>" class="dashboard-nav-link"><i class="bi bi-archive" aria-hidden="true"></i><span>Equipment Inventory</span></a>
-            <a href="<?= base_url('admin/reservations#transactions') ?>" class="dashboard-nav-link"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>Transactions</span></a>
+            <a href="<?= base_url('admin/transactions') ?>" class="dashboard-nav-link"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>Transactions</span></a>
         </nav>
         <a href="<?= base_url('logout') ?>" class="dashboard-logout"><i class="bi bi-box-arrow-left" aria-hidden="true"></i><span>Logout</span></a>
     </aside>

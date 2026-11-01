@@ -34,9 +34,9 @@ $to = min($currentPage * $perPage, $total);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipment Inventory - CPC Equipment Tracker</title>
+    <title>Equipment Inventory - CPC Equipment Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/catalog.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/admin-dashboard.css') ?>" rel="stylesheet">
@@ -51,7 +51,7 @@ $to = min($currentPage * $perPage, $total);
         <nav class="dashboard-nav" aria-label="Admin navigation">
             <a href="<?= base_url('admin') ?>" class="dashboard-nav-link"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Dashboard</span></a>
             <a href="<?= base_url('admin/equipment') ?>" class="dashboard-nav-link active" aria-current="page"><i class="bi bi-box-seam" aria-hidden="true"></i><span>Equipment Inventory</span></a>
-            <a href="<?= base_url('admin/reservations#transactions') ?>" class="dashboard-nav-link"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>Transactions</span></a>
+            <a href="<?= base_url('admin/transactions') ?>" class="dashboard-nav-link"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>Transactions</span></a>
         </nav>
         <a href="<?= base_url('logout') ?>" class="dashboard-logout"><i class="bi bi-box-arrow-left" aria-hidden="true"></i><span>Logout</span></a>
     </aside>
@@ -129,7 +129,6 @@ $to = min($currentPage * $perPage, $total);
         <section class="admin-inventory-card" aria-labelledby="inventory-section-title">
             <div class="admin-inventory-toolbar">
                 <h2 id="inventory-section-title" class="admin-inventory-heading">
-                    <i class="bi bi-box-seam-fill" aria-hidden="true"></i>
                     <span>Equipment Inventory</span>
                 </h2>
 

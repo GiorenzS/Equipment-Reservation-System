@@ -1,0 +1,422 @@
+/* Admin Transactions & Reservations Styling */
+
+.admin-tx-page .dashboard-main {
+    max-width: 1900px;
+}
+
+/* Header Banner Card */
+.admin-tx-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 24px 26px;
+    border: 1px solid #bdd3ff;
+    border-radius: 18px;
+    background: #e8f1ff;
+}
+
+.admin-tx-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-tx-banner-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    place-items: center;
+    border-radius: 14px;
+    background: #fff;
+    color: #1e62e8;
+    font-size: 1.45rem;
+    box-shadow: 0 2px 8px rgba(30, 98, 232, 0.08);
+}
+
+.admin-tx-banner h1 {
+    margin: 0;
+    color: #13253c;
+    font-size: 1.5rem;
+    font-weight: 750;
+    letter-spacing: -0.025em;
+}
+
+.admin-tx-banner p {
+    margin: 4px 0 0;
+    color: #61708a;
+    font-size: .88rem;
+}
+
+.admin-tx-summary-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.admin-tx-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #d0e0fc;
+    color: #2463eb;
+    font-size: .8rem;
+    font-weight: 650;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+.admin-tx-pill:hover {
+    background: #f1f6ff;
+    border-color: #2463eb;
+    color: #1d4ed8;
+}
+
+.admin-tx-pill span.badge-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #2463eb;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 750;
+}
+
+.admin-tx-pill.pill-amber span.badge-num {
+    background: #f59e0b;
+}
+
+.admin-tx-pill.pill-green span.badge-num {
+    background: #10b981;
+}
+
+/* Nav Tabs */
+.admin-tx-tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.admin-tx-nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid #d7e2fb;
+    border-radius: 12px;
+    background: #eaf1ff;
+    flex-wrap: wrap;
+}
+
+.admin-tx-tab-btn {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #536178;
+    font-size: .82rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+    white-space: nowrap;
+}
+
+.admin-tx-tab-btn:hover {
+    color: #155de1;
+}
+
+.admin-tx-tab-btn.active {
+    background: #fff;
+    color: #14263d;
+    box-shadow: 0 1px 4px rgba(19, 43, 77, .1);
+}
+
+.admin-tx-tab-btn .tab-count {
+    color: #7c8799;
+    font-weight: 750;
+    font-size: .75rem;
+}
+
+.admin-tx-tab-btn.active .tab-count {
+    color: #155de1;
+}
+
+/* Transaction Card */
+.admin-tx-card {
+    border: 1px solid #dfe5ef;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(20, 39, 66, .04);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.admin-tx-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #edf2f8;
+    background: #fff;
+}
+
+.admin-tx-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: #101c30;
+    font-size: 1.15rem;
+    font-weight: 750;
+    letter-spacing: -.02em;
+}
+
+.admin-tx-card-title i {
+    font-size: 1.25rem;
+}
+
+.admin-tx-card-title.title-pending i { color: #f59e0b; }
+.admin-tx-card-title.title-checkout i { color: #2463eb; }
+.admin-tx-card-title.title-active i { color: #10b981; }
+.admin-tx-card-title.title-returned i { color: #64748b; }
+
+.admin-tx-card-meta {
+    margin: 3px 0 0;
+    color: #77849a;
+    font-size: .8rem;
+}
+
+/* Table Design */
+.admin-tx-table {
+    min-width: 900px;
+}
+
+.admin-tx-table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 12px 18px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-tx-table tbody td {
+    padding: 16px 18px;
+    color: #334155;
+    font-size: .85rem;
+    border-bottom: 1px solid #f1f4f9;
+}
+
+.admin-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-user-avatar {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border-radius: 50%;
+    background: #eaf1ff;
+    color: #2463eb;
+    font-size: .85rem;
+    font-weight: 750;
+}
+
+.admin-user-info strong {
+    display: block;
+    color: #101c30;
+    font-size: .88rem;
+    font-weight: 700;
+}
+
+.admin-user-info small {
+    display: block;
+    color: #78869b;
+    font-size: .75rem;
+    margin-top: 1px;
+}
+
+.admin-equipment-info strong {
+    display: block;
+    color: #101c30;
+    font-size: .88rem;
+    font-weight: 700;
+}
+
+.admin-equipment-info small {
+    display: block;
+    color: #2463eb;
+    font-size: .75rem;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.admin-schedule-info {
+    font-size: .82rem;
+    color: #334155;
+}
+
+.admin-schedule-info .schedule-time {
+    display: block;
+    color: #78869b;
+    font-size: .74rem;
+    margin-top: 1px;
+}
+
+/* Status Badges */
+.admin-badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: .74rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.admin-badge-status i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.badge-pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.badge-approved {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-checkout {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-returned {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge-overdue {
+    background: #fee2e2;
+    color: #b91c1c;
+    font-weight: 700;
+}
+
+/* Return Form Layout */
+.admin-return-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-return-select {
+    min-width: 110px;
+    height: 34px;
+    font-size: .78rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0 24px 0 8px;
+}
+
+.admin-return-btn {
+    height: 34px;
+    padding: 0 12px;
+    font-size: .78rem;
+    font-weight: 650;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+/* Empty State */
+.admin-tx-empty {
+    padding: 48px 20px;
+    text-align: center;
+    color: #78869b;
+}
+
+.admin-tx-empty i {
+    font-size: 2.2rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.admin-tx-empty h5 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.admin-tx-empty p {
+    font-size: .84rem;
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .admin-tx-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .admin-tx-tabs-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-tx-banner {
+        padding: 18px 16px;
+    }
+    
+    .admin-tx-card-header {
+        padding: 16px 16px 12px;
+    }
+    
+    .admin-tx-nav-tabs {
+        width: 100%;
+    }
+    
+    .admin-tx-tab-btn {
+        flex: 1 1 45%;
+        justify-content: center;
+    }
+}
+
