@@ -44,7 +44,7 @@ $now = date('Y-m-d H:i:s');
         </a>
         <nav class="dashboard-nav" aria-label="Admin navigation">
             <a href="<?= base_url('admin') ?>" class="dashboard-nav-link"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Dashboard</span></a>
-            <a href="<?= base_url('admin/equipment') ?>" class="dashboard-nav-link"><i class="bi bi-archive" aria-hidden="true"></i></i><span>Equipment Inventory</span></a>
+            <a href="<?= base_url('admin/equipment') ?>" class="dashboard-nav-link"><i class="bi bi-archive" aria-hidden="true"></i><span>Equipment Inventory</span></a>
             <a href="<?= base_url('admin/transactions') ?>" class="dashboard-nav-link active" aria-current="page"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>Transactions</span></a>
         </nav>
         <a href="<?= base_url('logout') ?>" class="dashboard-logout"><i class="bi bi-box-arrow-left" aria-hidden="true"></i><span>Logout</span></a>
@@ -109,18 +109,17 @@ $now = date('Y-m-d H:i:s');
                 </div>
             </div>
             <div class="admin-tx-summary-pills">
-                <a href="#pending-section" class="admin-tx-pill pill-amber" data-tab="pending">
+                <a href="#pending-section" class="admin-tx-pill" data-tab="pending">
                     <span>Pending Approvals</span>
                 </a>
                 <a href="#checkout-section" class="admin-tx-pill" data-tab="checkout">
                     <span>Awaiting Checkout</span>
                 </a>
-                <a href="#active-section" class="admin-tx-pill pill-green" data-tab="active">
+                <a href="#active-section" class="admin-tx-pill" data-tab="active">
                     <span>Active Checkouts</span>
                 </a>
-                <a href="#overdue-section" class="admin-tx-pill pill-red" data-tab="overdue">
+                <a href="#overdue-section" class="admin-tx-pill" data-tab="overdue">
                     <span>Pending Returns</span>
-                    <span class="badge-num"><?= (int) ($counts['overdue'] ?? 0) ?></span>
                 </a>
             </div>
         </section>
@@ -144,9 +143,8 @@ $now = date('Y-m-d H:i:s');
                     <span class="tab-count"><?= (int) ($counts['active'] ?? 0) ?></span>
                 </button>
                 <button type="button" class="admin-tx-tab-btn" data-filter-queue="overdue">
-                    <i class="bi bi-exclamation-triangle-fill text-danger me-1" aria-hidden="true"></i>
                     <span>Pending Returns</span>
-                    <span class="tab-count tab-count-danger"><?= (int) ($counts['overdue'] ?? 0) ?></span>
+                    <span class="tab-count"><?= (int) ($counts['overdue'] ?? 0) ?></span>
                 </button>
                 <button type="button" class="admin-tx-tab-btn" data-filter-queue="returned">
                     <span>Return History</span>
@@ -423,9 +421,7 @@ $now = date('Y-m-d H:i:s');
             <div class="admin-tx-card-header">
                 <div>
                     <h2 class="admin-tx-card-title title-overdue">
-                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
                         <span>Pending Returns &ndash; Overdue</span>
-                        <span class="badge rounded-pill bg-danger ms-2 small"><?= count($overdueTransactions ?? []) ?></span>
                     </h2>
                     <p class="admin-tx-card-meta">Items past their expected return date still in borrower custody.</p>
                 </div>

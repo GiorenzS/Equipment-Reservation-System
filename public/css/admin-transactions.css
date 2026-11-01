@@ -7,8 +7,10 @@
 /* Header Banner Card */
 .admin-tx-banner {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: nowrap;
     gap: 24px;
     margin-bottom: 24px;
     padding: 24px 26px;
@@ -19,6 +21,8 @@
 
 .admin-tx-banner-content {
     display: flex;
+    flex: 1 1 auto;
+    min-width: none;
     align-items: center;
     gap: 16px;
 }
@@ -52,9 +56,13 @@
 
 .admin-tx-summary-pills {
     display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+
 }
 
 .admin-tx-pill {
@@ -194,10 +202,21 @@
     font-size: 1.25rem;
 }
 
-.admin-tx-card-title.title-pending i { color: #f59e0b; }
-.admin-tx-card-title.title-checkout i { color: #2463eb; }
-.admin-tx-card-title.title-active i { color: #10b981; }
-.admin-tx-card-title.title-returned i { color: #64748b; }
+.admin-tx-card-title.title-pending i {
+    color: #f59e0b;
+}
+
+.admin-tx-card-title.title-checkout i {
+    color: #2463eb;
+}
+
+.admin-tx-card-title.title-active i {
+    color: #10b981;
+}
+
+.admin-tx-card-title.title-returned i {
+    color: #64748b;
+}
 
 .admin-tx-card-meta {
     margin: 3px 0 0;
@@ -394,7 +413,7 @@
         align-items: flex-start;
         gap: 16px;
     }
-    
+
     .admin-tx-tabs-row {
         flex-direction: column;
         align-items: flex-start;
@@ -405,15 +424,15 @@
     .admin-tx-banner {
         padding: 18px 16px;
     }
-    
+
     .admin-tx-card-header {
         padding: 16px 16px 12px;
     }
-    
+
     .admin-tx-nav-tabs {
         width: 100%;
     }
-    
+
     .admin-tx-tab-btn {
         flex: 1 1 45%;
         justify-content: center;
@@ -453,7 +472,7 @@
 }
 
 /* Overdue row tint */
-tr.table-danger-row > td {
+tr.table-danger-row>td {
     background: #fff7f7;
 }
 
@@ -462,4 +481,3 @@ tr.table-danger-row > td {
     background: #fecaca;
     color: #dc2626;
 }
-
