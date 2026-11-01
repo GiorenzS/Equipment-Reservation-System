@@ -48,11 +48,12 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last mont
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/catalog.css') ?>" rel="stylesheet">
     <link href="<?= base_url('css/admin-dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('css/admin-transactions.css') ?>" rel="stylesheet">
 </head>
 <body class="dashboard-page admin-dashboard-page">
     <aside class="dashboard-sidebar">
         <a href="<?= base_url('admin') ?>" class="dashboard-brand">
-            <span class="dashboard-brand-icon"><i class="bi bi-building-gear" aria-hidden="true"></i></span>
+            <span class="dashboard-brand-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
             <span><strong>CPC</strong><small>Equipment Reservation</small></span>
         </a>
         <nav class="dashboard-nav" aria-label="Admin navigation">
@@ -115,46 +116,102 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last mont
 
         <section class="catalog-stats admin-dashboard-stats" aria-label="System summary">
             <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/equipment') . ($selectedDepartmentId !== null ? '?department_id=' . (int) $selectedDepartmentId : '') ?>" aria-label="View equipment inventory"><span class="catalog-stat-icon stat-blue"><i class="bi bi-box-seam" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Total Equipment</span><strong><?= esc((string) $equipmentStats['total']) ?></strong><small><?= esc($growthLabel) ?></small></div></a>
-            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/reservations') ?>" aria-label="View active reservations"><span class="catalog-stat-icon stat-green"><i class="bi bi-calendar-check" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Active Reservations</span><strong><?= esc((string) $equipmentStats['activeReservations']) ?></strong><small>pending or approved</small></div></a>
-            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/reservations#transactions') ?>" aria-label="View ongoing borrowings"><span class="catalog-stat-icon stat-amber"><i class="bi bi-arrow-left-right" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Ongoing Borrowings</span><strong><?= esc((string) $equipmentStats['ongoingBorrowings']) ?></strong><small><?= esc((string) $equipmentStats['dueToday']) ?> due today</small></div></a>
-            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/reservations#transactions') ?>" aria-label="View pending returns"><span class="catalog-stat-icon stat-red"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Pending Returns</span><strong><?= esc((string) $equipmentStats['pendingReturns']) ?></strong><small class="admin-overdue-note"><?= esc((string) $equipmentStats['overdueReturns']) ?> overdue</small></div></a>
+            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/transactions') ?>" aria-label="View active reservations"><span class="catalog-stat-icon stat-green"><i class="bi bi-calendar-check" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Active Reservations</span><strong><?= esc((string) $equipmentStats['activeReservations']) ?></strong><small>pending or approved</small></div></a>
+            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/transactions') ?>" aria-label="View ongoing borrowings"><span class="catalog-stat-icon stat-amber"><i class="bi bi-arrow-left-right" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Ongoing Borrowings</span><strong><?= esc((string) $equipmentStats['ongoingBorrowings']) ?></strong><small><?= esc((string) $equipmentStats['dueToday']) ?> due today</small></div></a>
+            <a class="catalog-stat catalog-stat-link" href="<?= base_url('admin/transactions') ?>" aria-label="View pending returns"><span class="catalog-stat-icon stat-red"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span><div><span class="catalog-stat-label">Pending Returns</span><strong><?= esc((string) $equipmentStats['pendingReturns']) ?></strong><small class="admin-overdue-note"><?= esc((string) $equipmentStats['overdueReturns']) ?> overdue</small></div></a>
         </section>
 
-        <section class="admin-approval-card" aria-labelledby="approval-queue-title">
-            <div class="admin-approval-header">
-                <div><h1 id="approval-queue-title">Pending Approval Queue</h1><p>Review and process reservation requests.</p></div>
-                <nav class="admin-queue-tabs" aria-label="Filter pending requests">
-                    <a class="<?= $filter === 'all' ? 'active' : '' ?>" href="<?= esc($queueUrl('all')) ?>">All Pending <span><?= esc((string) $pendingCounts['all']) ?></span></a>
-                    <a class="<?= $filter === 'faculty' ? 'active' : '' ?>" href="<?= esc($queueUrl('faculty')) ?>">Faculty <span><?= esc((string) $pendingCounts['faculty']) ?></span></a>
-                    <a class="<?= $filter === 'students' ? 'active' : '' ?>" href="<?= esc($queueUrl('students')) ?>">Students <span><?= esc((string) $pendingCounts['students']) ?></span></a>
+        <section class="admin-tx-card" id="pending-section" aria-labelledby="approval-queue-title">
+            <div class="admin-tx-card-header">
+                <div>
+                    <h2 class="admin-tx-card-title title-pending" id="approval-queue-title">
+                        <span>Pending Approval Queue</span>
+                    </h2>
+                    <p class="admin-tx-card-meta">Review requests submitted by students and faculty awaiting approval.</p>
+                </div>
+                <nav class="admin-tx-nav-tabs admin-queue-tabs" aria-label="Filter pending requests">
+                    <a class="admin-tx-tab-btn <?= $filter === 'all' ? 'active' : '' ?>" href="<?= esc($queueUrl('all')) ?>">
+                        <span>All Pending</span>
+                        <span class="tab-count"><?= esc((string) $pendingCounts['all']) ?></span>
+                    </a>
+                    <a class="admin-tx-tab-btn <?= $filter === 'faculty' ? 'active' : '' ?>" href="<?= esc($queueUrl('faculty')) ?>">
+                        <span>Faculty</span>
+                        <span class="tab-count"><?= esc((string) $pendingCounts['faculty']) ?></span>
+                    </a>
+                    <a class="admin-tx-tab-btn <?= $filter === 'students' ? 'active' : '' ?>" href="<?= esc($queueUrl('students')) ?>">
+                        <span>Students</span>
+                        <span class="tab-count"><?= esc((string) $pendingCounts['students']) ?></span>
+                    </a>
                 </nav>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-striped admin-approval-table align-middle mb-0">
-                    <thead><tr><th scope="col">User</th><th scope="col">Equipment</th><th scope="col">Date</th><th scope="col">Time</th><th scope="col">Purpose</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+                <table class="table admin-tx-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Requester</th>
+                            <th scope="col">Equipment</th>
+                            <th scope="col">Reservation Date</th>
+                            <th scope="col">Schedule</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <?php if (empty($pendingReservations)): ?>
-                            <tr><td colspan="7" class="text-center text-muted py-4">No reservations found.</td></tr>
-                        <?php else: foreach ($pendingReservations as $reservation): ?>
+                            <tr>
+                                <td colspan="7">
+                                    <div class="admin-tx-empty">
+                                        <i class="bi bi-inbox" aria-hidden="true"></i>
+                                        <h5>No Pending Reservations</h5>
+                                        <p>All reservation requests have been processed.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php else: foreach ($pendingReservations as $res): ?>
                             <?php
-                                $requesterName = trim((string) ($reservation['first_name'] ?? '') . ' ' . (string) ($reservation['last_name'] ?? '')) ?: (string) $reservation['id_number'];
-                                $requesterRole = strtoupper((string) ($reservation['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
+                                $requesterName = trim((string) ($res['first_name'] ?? '') . ' ' . (string) ($res['last_name'] ?? '')) ?: (string) $res['id_number'];
+                                $requesterRole = strtoupper((string) ($res['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
+                                $initial = strtoupper(substr($res['first_name'] ?? $res['id_number'] ?? 'U', 0, 1));
                             ?>
                             <tr>
-                                <td><strong class="admin-requester-name"><?= esc($requesterName) ?></strong><small class="admin-requester-meta"><?= esc($requesterRole) ?> · ID <?= esc($reservation['id_number']) ?></small></td>
-                                <td><strong class="admin-equipment-name"><?= esc($reservation['equipment_name']) ?></strong><small class="admin-equipment-code"><?= esc($reservation['equipment_code']) ?></small></td>
-                                <td><?= esc($reservation['reservation_date']) ?></td>
-                                <td><?= esc($reservation['start_time']) ?>–<?= esc($reservation['end_time']) ?></td>
-                                <td><?= esc($reservation['purpose']) ?></td>
-                                <td><?= esc($reservation['status']) ?></td>
+                                <td>
+                                    <div class="admin-user-cell">
+                                        <span class="admin-user-avatar"><?= esc($initial) ?></span>
+                                        <div class="admin-user-info">
+                                            <strong><?= esc($requesterName) ?></strong>
+                                            <small><?= esc($requesterRole) ?> · ID <?= esc($res['id_number']) ?></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="admin-equipment-info">
+                                        <strong><?= esc($res['equipment_name']) ?></strong>
+                                        <small><?= esc($res['equipment_code']) ?></small>
+                                    </div>
+                                </td>
+                                <td><?= esc($res['reservation_date']) ?></td>
+                                <td>
+                                    <div class="admin-schedule-info">
+                                        <span><?= esc($res['start_time']) ?> – <?= esc($res['end_time']) ?></span>
+                                    </div>
+                                </td>
+                                <td><?= esc($res['purpose']) ?></td>
+                                <td>
+                                    <span class="admin-badge-status badge-pending">
+                                        <i></i><?= esc(ucfirst(strtolower($res['status']))) ?>
+                                    </span>
+                                </td>
                                 <td class="text-end text-nowrap">
-                                    <?php foreach (['APPROVED' => 'success', 'REJECTED' => 'danger'] as $status => $style): ?>
-                                        <form class="d-inline" method="post" action="<?= base_url('admin/reservations/' . (int) $reservation['reservation_id'] . '/status/' . strtolower($status)) ?>">
-                                            <?= csrf_field() ?>
-                                            <button class="btn btn-<?= $style ?> btn-sm"><?= ucfirst(strtolower($status)) ?></button>
-                                        </form>
-                                    <?php endforeach; ?>
+                                    <form class="d-inline" method="post" action="<?= base_url('admin/reservations/' . (int) $res['reservation_id'] . '/status/approved') ?>">
+                                        <?= csrf_field() ?>
+                                        <button class="btn btn-success btn-sm me-1"><i class="bi bi-check-lg me-1"></i>Approve</button>
+                                    </form>
+                                    <form class="d-inline" method="post" action="<?= base_url('admin/reservations/' . (int) $res['reservation_id'] . '/status/rejected') ?>">
+                                        <?= csrf_field() ?>
+                                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg me-1"></i>Reject</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; endif; ?>
