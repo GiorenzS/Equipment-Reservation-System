@@ -42,7 +42,7 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last mont
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - CPC Equipment Tracker</title>
+    <title>Admin Dashboard - CPC Equipment Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet">
@@ -53,7 +53,7 @@ $growthLabel = $growth === null ? 'No baseline' : sprintf('%+d%% since last mont
     <aside class="dashboard-sidebar">
         <a href="<?= base_url('admin') ?>" class="dashboard-brand">
             <span class="dashboard-brand-icon"><i class="bi bi-building-gear" aria-hidden="true"></i></span>
-            <span><strong>CPC</strong><small>Equipment Tracker</small></span>
+            <span><strong>CPC</strong><small>Equipment Reservation</small></span>
         </a>
         <nav class="dashboard-nav" aria-label="Admin navigation">
             <a href="<?= base_url('admin') ?>" class="dashboard-nav-link active" aria-current="page"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Dashboard</span></a>

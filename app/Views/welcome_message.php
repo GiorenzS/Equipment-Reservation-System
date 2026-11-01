@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPC Equipment Tracker | Dashboard</title>
+    <title>CPC Equipment Reservation | Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
@@ -192,7 +192,7 @@
 
 <aside class="sidebar">
     <div class="brand">
-        CPC EQUIPMENT TRACKER
+        CPC EQUIPMENT RESERVATION
         <small>Equipment Management System</small>
     </div>
 
@@ -214,7 +214,7 @@
         <div>
             <h1 class="h3 fw-bold mb-1">Dashboard</h1>
             <div class="text-secondary">
-                Welcome to the CPC Equipment Tracker System.
+                Welcome to the CPC Equipment Reservation System.
             </div>
         </div>
 
@@ -284,7 +284,7 @@
     </div>
 
     <div class="footer">
-        &copy; <?= date('Y') ?> CPC Equipment Tracker System
+        &copy; <?= date('Y') ?> CPC Equipment Reservation System
     </div>
 
 </main>

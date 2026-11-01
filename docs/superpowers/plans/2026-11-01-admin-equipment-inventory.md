@@ -112,7 +112,7 @@
 
 - [ ] **Step 1: Implement Admin Sidebar**
   Reuse the admin sidebar from `app/Views/admin/dashboard.php`:
-  - CPC Equipment Tracker brand.
+  - CPC Equipment Reservation brand.
   - "Dashboard" link (`admin`).
   - "Equipment Inventory" link (`admin/equipment`) with `active` class and `aria-current="page"`.
   - "Transactions" link (`admin/reservations#transactions`).
