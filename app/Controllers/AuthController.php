@@ -15,7 +15,7 @@ class AuthController extends BaseController
     public function register()
     {
         if (session()->get('isLoggedIn') || session()->get('is_logged_in')) {
-            return redirect()->to('/');
+            return redirect()->to(strtoupper((string) session()->get('role')) === 'ADMIN' ? 'admin' : '/');
         }
 
         $departments = (new DepartmentModel())
@@ -106,7 +106,7 @@ class AuthController extends BaseController
     public function login()
     {
         if (session()->get('isLoggedIn') || session()->get('is_logged_in')) {
-            return redirect()->to('/');
+            return redirect()->to(strtoupper((string) session()->get('role')) === 'ADMIN' ? 'admin' : '/');
         }
 
         return view('auth/login');

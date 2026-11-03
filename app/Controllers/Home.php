@@ -11,9 +11,15 @@ class Home extends BaseController
 {
     protected $helpers = ['url', 'equipment'];
 
-    public function index(): string
+    public function index()
     {
         $session = session();
+
+        // Admins should land on the admin dashboard, not the user dashboard.
+        if (strtoupper((string) $session->get('role')) === 'ADMIN') {
+            return redirect()->to('admin');
+        }
+
         $userId  = (int) $session->get('user_id');
 
         // The dashboard picker lets users browse inventory across all departments.
