@@ -215,9 +215,29 @@ $to = min($currentPage * $perPage, $total);
                         ?>
                         <div class="col">
                             <article class="catalog-item-card">
-                                <a href="<?= base_url('equipment/' . (int) $item['equipment_id']) ?>" class="catalog-item-image" aria-label="View <?= esc($item['equipment_name']) ?> details">
-                                    <img src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>" alt="<?= esc($item['equipment_name']) ?>" loading="lazy">
-                                </a>
+                                <button type="button"
+                                    class="catalog-item-image btn-open-manage"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#manageEquipmentModal"
+                                    data-id="<?= (int) $item['equipment_id'] ?>"
+                                    data-code="<?= esc($item['equipment_code']) ?>"
+                                    data-name="<?= esc($item['equipment_name']) ?>"
+                                    data-department-id="<?= (int) ($item['department_id'] ?? 0) ?>"
+                                    data-category="<?= esc($categoryName) ?>"
+                                    data-brand="<?= esc($item['brand'] ?? '') ?>"
+                                    data-model="<?= esc($item['model'] ?? '') ?>"
+                                    data-serial="<?= esc($item['serial_number'] ?? '') ?>"
+                                    data-status="<?= esc($item['status'] ?? 'AVAILABLE') ?>"
+                                    data-condition="<?= esc($item['condition_status'] ?? 'GOOD') ?>"
+                                    data-description="<?= esc($item['description'] ?? '') ?>"
+                                    data-image="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
+                                    aria-label="Edit <?= esc($item['equipment_name']) ?>"
+                                    style="border: 0; padding: 0; width: 100%; background: transparent;">
+
+                                    <img src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
+                                        alt="<?= esc($item['equipment_name']) ?>"
+                                        loading="lazy">
+                                </button>
                                 <div class="catalog-item-body">
                                     <span class="catalog-asset-tag"><?= esc($item['equipment_code']) ?></span>
                                     <h2><?= esc($item['equipment_name']) ?></h2>
@@ -235,10 +255,26 @@ $to = min($currentPage * $perPage, $total);
                                                 <i></i><?= esc(ucwords(strtolower($condition))) ?>
                                             </span>
                                         </div>
-                                        <a href="<?= base_url('equipment/' . (int) $item['equipment_id']) ?>" class="admin-manage-btn" title="Manage <?= esc($item['equipment_name']) ?>">
+                                        <button type="button" 
+                                            class="admin-manage-btn btn-open-manage" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#manageEquipmentModal"
+                                            data-id="<?= (int) $item['equipment_id'] ?>"
+                                            data-code="<?= esc($item['equipment_code']) ?>"
+                                            data-name="<?= esc($item['equipment_name']) ?>"
+                                            data-department-id="<?= (int) ($item['department_id'] ?? 0) ?>"
+                                            data-category="<?= esc($categoryName) ?>"
+                                            data-brand="<?= esc($item['brand'] ?? '') ?>"
+                                            data-model="<?= esc($item['model'] ?? '') ?>"
+                                            data-serial="<?= esc($item['serial_number'] ?? '') ?>"
+                                            data-status="<?= esc($item['status'] ?? 'AVAILABLE') ?>"
+                                            data-condition="<?= esc($item['condition_status'] ?? 'GOOD') ?>"
+                                            data-description="<?= esc($item['description'] ?? '') ?>"
+                                            data-image="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
+                                            title="Manage <?= esc($item['equipment_name']) ?>">
                                             <i class="bi bi-wrench" aria-hidden="true"></i>
                                             <span>Manage</span>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </article>
@@ -261,17 +297,22 @@ $to = min($currentPage * $perPage, $total);
         'suggestedAssetCode'   => $suggestedAssetCode ?? null,
     ]) ?>
 
+    <?= view('admin/equipment/modal_edit', [
+        'departmentList' => $departmentList,
+        'categories'     => $categories,
+    ]) ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Auto-open modal if validation errors exist
-            const modalEl = document.getElementById('addNewEquipmentModal');
-            if (modalEl && modalEl.dataset.autoOpen === 'true') {
-                const modal = new bootstrap.Modal(modalEl);
-                modal.show();
+            // Auto-open Add modal if validation errors exist
+            const addModalEl = document.getElementById('addNewEquipmentModal');
+            if (addModalEl && addModalEl.dataset.autoOpen === 'true') {
+                const addModal = new bootstrap.Modal(addModalEl);
+                addModal.show();
             }
 
-            // Drag and drop image upload
+            // Drag and drop image upload for Add Modal
             const dropzone = document.getElementById('equipmentDropzone');
             const fileInput = document.getElementById('equipmentImageInput');
             const promptEl = document.getElementById('dropzonePrompt');
@@ -363,14 +404,175 @@ $to = min($currentPage * $perPage, $total);
                     };
                     reader.readAsDataURL(file);
                 }
+            }
 
-                function formatBytes(bytes) {
-                    if (bytes === 0) return '0 B';
-                    const k = 1024;
-                    const sizes = ['B', 'KB', 'MB'];
-                    const i = Math.floor(Math.log(bytes) / Math.log(k));
-                    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            // =====================================================================
+            // Manage Equipment Modal Dynamic Population & Handling
+            // =====================================================================
+            const manageModalEl = document.getElementById('manageEquipmentModal');
+            const manageForm = document.getElementById('manageEquipmentForm');
+            const manageDeleteForm = document.getElementById('manageDeleteForm');
+            const btnManageDelete = document.getElementById('btnManageDelete');
+
+            const currentImg = document.getElementById('manageCurrentImg');
+            const manageDropzone = document.getElementById('manageDropzone');
+            const manageFileInput = document.getElementById('manageEquipmentImageInput');
+            const managePrompt = document.getElementById('manageDropzonePrompt');
+            const managePreview = document.getElementById('manageDropzonePreview');
+            const managePreviewImg = document.getElementById('managePreviewImg');
+            const manageFileName = document.getElementById('managePreviewFileName');
+            const manageFileSize = document.getElementById('managePreviewFileSize');
+            const manageRemoveBtn = document.getElementById('btnRemoveManageImage');
+
+            // Manage buttons click
+            document.querySelectorAll('.btn-open-manage').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const code = btn.dataset.code || '';
+                    const name = btn.dataset.name || '';
+                    const departmentId = btn.dataset.departmentId || '';
+                    const category = btn.dataset.category || '';
+                    const brand = btn.dataset.brand || '';
+                    const model = btn.dataset.model || '';
+                    const serial = btn.dataset.serial || '';
+                    const status = btn.dataset.status || 'AVAILABLE';
+                    const condition = btn.dataset.condition || 'GOOD';
+                    const description = btn.dataset.description || '';
+                    const image = btn.dataset.image || '';
+
+                    // Set form actions
+                    manageForm.action = '<?= base_url('admin/equipment') ?>/' + id + '/update';
+                    manageDeleteForm.action = '<?= base_url('admin/equipment') ?>/' + id + '/delete';
+
+                    // Populate fields
+                    document.getElementById('manage_equipment_id').value = id;
+                    document.getElementById('manage_eq_name').value = name;
+                    document.getElementById('manage_eq_code').value = code;
+                    document.getElementById('manage_eq_serial').value = serial;
+                    document.getElementById('manage_eq_department').value = departmentId;
+                    document.getElementById('manage_eq_category').value = category;
+                    document.getElementById('manage_eq_brand').value = brand;
+                    document.getElementById('manage_eq_model').value = model;
+                    document.getElementById('manage_eq_status').value = status;
+                    document.getElementById('manage_eq_condition').value = condition;
+                    document.getElementById('manage_eq_description').value = description;
+
+                    // Set current thumbnail
+                    if (currentImg) {
+                        currentImg.src = image;
+                    }
+
+                    // Reset replacement preview
+                    resetManageDropzone();
+                });
+            });
+
+            // Replacement dropzone event listeners
+            if (manageDropzone && manageFileInput) {
+                manageDropzone.addEventListener('click', (e) => {
+                    if (e.target.closest('#btnRemoveManageImage')) return;
+                    manageFileInput.click();
+                });
+
+                manageDropzone.addEventListener('keydown', (e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('#btnRemoveManageImage')) {
+                        e.preventDefault();
+                        manageFileInput.click();
+                    }
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    manageDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        manageDropzone.classList.add('dragover');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    manageDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        manageDropzone.classList.remove('dragover');
+                    });
+                });
+
+                manageDropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    if (dt && dt.files && dt.files.length > 0) {
+                        manageFileInput.files = dt.files;
+                        handleManageFileSelection(dt.files[0]);
+                    }
+                });
+
+                manageFileInput.addEventListener('change', () => {
+                    if (manageFileInput.files && manageFileInput.files.length > 0) {
+                        handleManageFileSelection(manageFileInput.files[0]);
+                    }
+                });
+
+                if (manageRemoveBtn) {
+                    manageRemoveBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        resetManageDropzone();
+                    });
                 }
+
+                function handleManageFileSelection(file) {
+                    if (!file) return;
+
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Please select a valid image file (JPEG, PNG, WebP, or SVG).');
+                        manageFileInput.value = '';
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size exceeds 5MB limit.');
+                        manageFileInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        managePreviewImg.src = e.target.result;
+                        manageFileName.textContent = file.name;
+                        manageFileSize.textContent = formatBytes(file.size);
+                        managePrompt.classList.add('d-none');
+                        managePreview.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                function resetManageDropzone() {
+                    manageFileInput.value = '';
+                    managePreviewImg.src = '';
+                    manageFileName.textContent = '';
+                    manageFileSize.textContent = '';
+                    managePreview.classList.add('d-none');
+                    managePrompt.classList.remove('d-none');
+                }
+            }
+
+            // Delete / Decommission Asset handler
+            if (btnManageDelete) {
+                btnManageDelete.addEventListener('click', () => {
+                    const eqName = document.getElementById('manage_eq_name').value || 'this asset';
+                    const confirmed = confirm('Are you sure you want to decommission/delete ' + eqName + '? This action cannot be undone.');
+                    if (confirmed && manageDeleteForm) {
+                        manageDeleteForm.submit();
+                    }
+                });
+            }
+
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
             }
         });
     </script>

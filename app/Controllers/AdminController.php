@@ -225,6 +225,190 @@ class AdminController extends BaseController
             ->with('success', 'Equipment "' . $data['equipment_name'] . '" added successfully.');
     }
 
+    public function getEquipment(int $id)
+    {
+        $session = session();
+        if ($session->get('role') !== 'ADMIN') {
+            return $this->response->setStatusCode(403)->setJSON(['error' => 'Unauthorized']);
+        }
+
+        $item = (new EquipmentModel())
+            ->select('equipment.*, equipment_categories.category_name')
+            ->join('equipment_categories', 'equipment_categories.category_id = equipment.category_id', 'left')
+            ->find($id);
+
+        if (! $item) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'Equipment not found']);
+        }
+
+        $item['image_url'] = equipment_image_url($item['image'] ?? null);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $item,
+        ]);
+    }
+
+    public function updateEquipment(int $id)
+    {
+        $session = session();
+        if ($session->get('role') !== 'ADMIN') {
+            return redirect()->to(base_url('login'))->with('error', 'Unauthorized access.');
+        }
+
+        $equipmentModel = new EquipmentModel();
+        $equipment = $equipmentModel->find($id);
+        if (! $equipment) {
+            return redirect()->to(base_url('admin/equipment'))->with('error', 'Equipment item not found.');
+        }
+
+        $validationRules = [
+            'equipment_name'   => 'required|min_length[2]|max_length[100]',
+            'department_id'    => 'required|is_natural_no_zero',
+            'category'         => 'required|min_length[2]|max_length[100]',
+            'brand'            => 'permit_empty|max_length[100]',
+            'model'            => 'permit_empty|max_length[100]',
+            'serial_number'    => "permit_empty|max_length[100]|is_unique[equipment.serial_number,equipment_id,{$id}]",
+            'status'           => 'permit_empty|in_list[AVAILABLE,RESERVED,MAINTENANCE,IN_USE]',
+            'condition_status' => 'permit_empty|in_list[GOOD,FAIR,DAMAGED]',
+            'description'      => 'permit_empty|max_length[1000]',
+            'equipment_image'  => 'permit_empty|is_image[equipment_image]|max_size[equipment_image,5120]',
+        ];
+
+        $validationMessages = [
+            'equipment_name' => [
+                'required' => 'Equipment Name is required.',
+            ],
+            'department_id' => [
+                'required'            => 'Department / Office is required.',
+                'is_natural_no_zero' => 'Please select a valid Department / Office.',
+            ],
+            'category' => [
+                'required'   => 'Category is required.',
+                'min_length' => 'Category must be at least 2 characters.',
+                'max_length' => 'Category cannot exceed 100 characters.',
+            ],
+            'serial_number' => [
+                'is_unique' => 'This Serial Number is already registered.',
+            ],
+            'equipment_image' => [
+                'is_image' => 'Uploaded file must be a valid image (JPG, PNG, WebP, SVG).',
+                'max_size' => 'Image file size must not exceed 5MB.',
+            ],
+        ];
+
+        if (! $this->validate($validationRules, $validationMessages)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors())
+                ->with('error', 'Please check the form for errors and try again.')
+                ->with('manageEquipmentId', $id);
+        }
+
+        $categoryName = trim((string) $this->request->getPost('category'));
+        $categoryModel = new CategoryModel();
+        $existingCategory = $categoryModel
+            ->where('LOWER(category_name)', strtolower($categoryName))
+            ->first();
+
+        if ($existingCategory) {
+            $categoryId = (int) $existingCategory['category_id'];
+        } else {
+            $categoryId = (int) $categoryModel->insert([
+                'category_name' => $categoryName,
+                'description'   => null,
+            ]);
+        }
+
+        $imageFile = $this->request->getFile('equipment_image');
+        $imageName = $equipment['image'];
+
+        if ($imageFile && $imageFile->isValid() && ! $imageFile->hasMoved()) {
+            $newImageName = $imageFile->getRandomName();
+            $targetPath = FCPATH . 'uploads/equipment/';
+            if (! is_dir($targetPath)) {
+                mkdir($targetPath, 0755, true);
+            }
+            $imageFile->move($targetPath, $newImageName);
+
+            // Clean up old image if local file
+            if (! empty($equipment['image'])) {
+                $oldPath = $targetPath . ltrim($equipment['image'], '/');
+                if (is_file($oldPath)) {
+                    @unlink($oldPath);
+                }
+            }
+            $imageName = $newImageName;
+        }
+
+        $brand = trim((string) $this->request->getPost('brand'));
+        $model = trim((string) $this->request->getPost('model'));
+        $serialNumber = trim((string) $this->request->getPost('serial_number'));
+        $description = trim((string) $this->request->getPost('description'));
+        $status = strtoupper(trim((string) $this->request->getPost('status'))) ?: 'AVAILABLE';
+        $conditionStatus = strtoupper(trim((string) $this->request->getPost('condition_status'))) ?: 'GOOD';
+
+        $data = [
+            'equipment_name'   => trim((string) $this->request->getPost('equipment_name')),
+            'department_id'    => (int) $this->request->getPost('department_id'),
+            'category_id'      => $categoryId,
+            'brand'            => $brand !== '' ? $brand : null,
+            'model'            => $model !== '' ? $model : null,
+            'serial_number'    => $serialNumber !== '' ? $serialNumber : null,
+            'status'           => $status,
+            'condition_status' => $conditionStatus,
+            'description'      => $description !== '' ? $description : null,
+            'image'            => $imageName,
+        ];
+
+        $equipmentModel->update($id, $data);
+
+        return redirect()->to(base_url('admin/equipment' . ($data['department_id'] ? '?department_id=' . $data['department_id'] : '')))
+            ->with('success', 'Equipment "' . $data['equipment_name'] . '" updated successfully.');
+    }
+
+    public function deleteEquipment(int $id)
+    {
+        $session = session();
+        if ($session->get('role') !== 'ADMIN') {
+            return redirect()->to(base_url('login'))->with('error', 'Unauthorized access.');
+        }
+
+        $equipmentModel = new EquipmentModel();
+        $equipment = $equipmentModel->find($id);
+        if (! $equipment) {
+            return redirect()->to(base_url('admin/equipment'))->with('error', 'Equipment item not found.');
+        }
+
+        // Check active reservations
+        $hasActiveReservations = (new ReservationModel())
+            ->where('equipment_id', $id)
+            ->whereIn('status', ['PENDING', 'APPROVED'])
+            ->countAllResults() > 0;
+
+        // Check active borrowings
+        $hasActiveBorrowing = Database::connect()->table('borrow_items')
+            ->join('borrow_transactions', 'borrow_transactions.transaction_id = borrow_items.transaction_id')
+            ->where('borrow_items.equipment_id', $id)
+            ->where('borrow_transactions.status', 'CHECKED_OUT')
+            ->countAllResults() > 0;
+
+        if ($hasActiveReservations || $hasActiveBorrowing || $equipment['status'] === 'IN_USE') {
+            return redirect()->back()->with('error', 'Cannot delete equipment that is currently checked out or has active/approved reservations.');
+        }
+
+        if (! empty($equipment['image'])) {
+            $imagePath = FCPATH . 'uploads/equipment/' . ltrim($equipment['image'], '/');
+            if (is_file($imagePath)) {
+                @unlink($imagePath);
+            }
+        }
+
+        $equipmentModel->delete($id);
+
+        return redirect()->to(base_url('admin/equipment'))->with('success', 'Equipment "' . $equipment['equipment_name'] . '" was successfully decommissioned and removed.');
+    }
+
     public function dashboard()
     {
         $session = session();
