@@ -48,7 +48,7 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
 <body class="dashboard-page admin-dashboard-page admin-tx-page">
     <aside class="dashboard-sidebar">
         <a href="<?= base_url('admin') ?>" class="dashboard-brand">
-            <span class="dashboard-brand-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+            <span class="dashboard-brand-icon"><img src="<?= base_url('assets/cpc-logo.jpg') ?>" alt="CPC Logo"></span>
             <span><strong>CPC</strong><small>Equipment Reservation</small></span>
         </a>
         <nav class="dashboard-nav" aria-label="Admin navigation">
