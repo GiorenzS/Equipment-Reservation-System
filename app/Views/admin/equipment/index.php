@@ -13,6 +13,7 @@
  * @var string $conditionFilter
  * @var \CodeIgniter\Pager\Pager $pager
  * @var array $paginationDetails
+ * @var string|null $suggestedAssetCode
  */
 
 $selectedDepartmentName = 'Select Department';
@@ -253,29 +254,126 @@ $to = min($currentPage * $perPage, $total);
         </section>
     </main>
 
-    <!-- Add New Equipment Modal (Placeholder) -->
-    <div class="modal fade" id="addNewEquipmentModal" tabindex="-1" aria-labelledby="addNewEquipmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-bottom">
-                    <h5 class="modal-title fw-bold" id="addNewEquipmentModalLabel"><i class="bi bi-box-seam me-2 text-primary"></i>Add New Equipment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="text-center py-3 text-muted">
-                        <i class="bi bi-tools display-6 text-primary mb-3 d-block"></i>
-                        <h6>Equipment Asset Creation Form</h6>
-                        <p class="small mb-0">Asset creation modal interface is ready. Integration with equipment management endpoints can be connected as needed.</p>
-                    </div>
-                </div>
-                <div class="modal-footer border-top bg-light">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?= view('admin/equipment/modal_add', [
+        'departmentList'       => $departmentList,
+        'categories'           => $categories,
+        'selectedDepartmentId' => $selectedDepartmentId,
+        'suggestedAssetCode'   => $suggestedAssetCode ?? null,
+    ]) ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-open modal if validation errors exist
+            const modalEl = document.getElementById('addNewEquipmentModal');
+            if (modalEl && modalEl.dataset.autoOpen === 'true') {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+
+            // Drag and drop image upload
+            const dropzone = document.getElementById('equipmentDropzone');
+            const fileInput = document.getElementById('equipmentImageInput');
+            const promptEl = document.getElementById('dropzonePrompt');
+            const previewEl = document.getElementById('dropzonePreview');
+            const previewImg = document.getElementById('previewImg');
+            const fileNameEl = document.getElementById('previewFileName');
+            const fileSizeEl = document.getElementById('previewFileSize');
+            const removeBtn = document.getElementById('btnRemoveImage');
+
+            if (dropzone && fileInput) {
+                dropzone.addEventListener('click', (e) => {
+                    if (e.target.closest('#btnRemoveImage')) return;
+                    fileInput.click();
+                });
+
+                dropzone.addEventListener('keydown', (e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('#btnRemoveImage')) {
+                        e.preventDefault();
+                        fileInput.click();
+                    }
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        dropzone.classList.add('dragover');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        dropzone.classList.remove('dragover');
+                    });
+                });
+
+                dropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    if (dt && dt.files && dt.files.length > 0) {
+                        fileInput.files = dt.files;
+                        handleFileSelection(dt.files[0]);
+                    }
+                });
+
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files && fileInput.files.length > 0) {
+                        handleFileSelection(fileInput.files[0]);
+                    }
+                });
+
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        fileInput.value = '';
+                        previewImg.src = '';
+                        fileNameEl.textContent = '';
+                        fileSizeEl.textContent = '';
+                        previewEl.classList.add('d-none');
+                        promptEl.classList.remove('d-none');
+                    });
+                }
+
+                function handleFileSelection(file) {
+                    if (!file) return;
+
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Please select a valid image file (JPEG, PNG, WebP, or SVG).');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size exceeds 5MB limit.');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewImg.src = e.target.result;
+                        fileNameEl.textContent = file.name;
+                        fileSizeEl.textContent = formatBytes(file.size);
+                        promptEl.classList.add('d-none');
+                        previewEl.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                function formatBytes(bytes) {
+                    if (bytes === 0) return '0 B';
+                    const k = 1024;
+                    const sizes = ['B', 'KB', 'MB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+                }
+            }
+        });
+    </script>
 </body>
 </html>
 

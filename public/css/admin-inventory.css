@@ -447,3 +447,267 @@
         display: none;
     }
 }
+
+/* ==========================================================================
+   Add New Equipment Modal Styles (Matches add-equipment-modal-design.png)
+   ========================================================================== */
+
+.admin-equipment-modal .modal-dialog {
+    max-width: 680px;
+    margin: 1.75rem auto;
+}
+
+.admin-equipment-modal .admin-modal-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.16);
+    overflow: hidden;
+}
+
+.admin-equipment-modal .admin-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 28px 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-equipment-modal .admin-modal-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.admin-equipment-modal .admin-modal-subtitle {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.admin-equipment-modal .admin-modal-close {
+    padding: 8px;
+    margin: -4px -4px 0 0;
+    border-radius: 8px;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.admin-equipment-modal .admin-modal-close:hover {
+    opacity: 1;
+}
+
+.admin-equipment-modal .admin-modal-body {
+    padding: 18px 28px 16px;
+}
+
+.admin-equipment-modal .admin-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.admin-equipment-modal .admin-form-control,
+.admin-equipment-modal .admin-form-select {
+    height: 44px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+    color: #1e293b;
+    background-color: #f8faff;
+    border: 1px solid #dbeafe;
+    border-radius: 11px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.admin-equipment-modal textarea.admin-form-control {
+    height: auto;
+    min-height: 85px;
+    resize: vertical;
+    line-height: 1.45;
+}
+
+.admin-equipment-modal .admin-form-control:focus,
+.admin-equipment-modal .admin-form-select:focus {
+    background-color: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+
+.admin-equipment-modal .admin-form-control::placeholder,
+.admin-equipment-modal textarea.admin-form-control::placeholder {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* Tracking / Asset Code with Lock Icon */
+.admin-asset-code-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.admin-asset-code-input {
+    padding-right: 42px !important;
+    font-weight: 600;
+    color: #2563eb !important;
+}
+
+.admin-asset-code-badge {
+    position: absolute;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+/* Dropzone Upload Styling */
+.admin-dropzone {
+    position: relative;
+    padding: 24px 20px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #f8faff;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-dropzone:hover,
+.admin-dropzone.dragover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.admin-dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #2563eb;
+    font-size: 1.25rem;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.admin-dropzone-title {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #475467;
+}
+
+.admin-dropzone-sub {
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+/* Dropzone Preview */
+.admin-dropzone-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-preview-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.admin-preview-img {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.admin-preview-meta {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-preview-name {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #1e293b;
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-preview-size {
+    font-size: 0.75rem;
+}
+
+.admin-preview-remove {
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+/* Modal Footer Buttons */
+.admin-equipment-modal .admin-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 28px 24px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.admin-btn-cancel {
+    padding: 9px 20px;
+    border-radius: 11px;
+    border: 1px solid #d0d5dd;
+    background: #ffffff;
+    color: #344054;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-btn-cancel:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.admin-btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px;
+    border-radius: 11px;
+    border: none;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-btn-save:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
+}

@@ -39,7 +39,7 @@ class EquipmentModel extends Model
         'model'          => 'permit_empty|max_length[100]',
         'serial_number'  => 'permit_empty|max_length[100]|is_unique[equipment.serial_number,equipment_id,{equipment_id}]',
         'description'    => 'permit_empty',
-        'status'         => 'permit_empty|in_list[AVAILABLE,IN_USE,RESERVED]',
+        'status'         => 'permit_empty|in_list[AVAILABLE,IN_USE,RESERVED,MAINTENANCE]',
         'condition_status' => 'permit_empty|in_list[GOOD,FAIR,DAMAGED]',
         'department_id'  => 'permit_empty|integer',
     ];

@@ -87,6 +87,13 @@ class AdminController extends BaseController
         $equipmentList = $equipmentModel->paginate(8, 'inventory');
         $pager = $equipmentModel->pager;
 
+        $count = (new EquipmentModel())->countAllResults();
+        $suggestedAssetCode = sprintf('EQ-CPC-%03d', $count + 1);
+        while ((new EquipmentModel())->where('equipment_code', $suggestedAssetCode)->first()) {
+            $count++;
+            $suggestedAssetCode = sprintf('EQ-CPC-%03d', $count + 1);
+        }
+
         $userName = trim((string) $session->get('full_name')) ?: (string) $session->get('id_number');
         $userRole = 'System Admin';
 
@@ -96,6 +103,7 @@ class AdminController extends BaseController
             'departmentList'       => $departmentList,
             'selectedDepartmentId' => $selectedDepartmentId,
             'totalAssets'          => $totalAssets,
+            'suggestedAssetCode'   => $suggestedAssetCode,
             'userName'             => $userName,
             'userRole'             => $userRole,
             'search'               => $search,
@@ -105,6 +113,100 @@ class AdminController extends BaseController
             'pager'                => $pager,
             'paginationDetails'    => $pager->getDetails('inventory'),
         ]);
+    }
+
+    public function storeEquipment()
+    {
+        $session = session();
+        if ($session->get('role') !== 'ADMIN') {
+            return redirect()->to(base_url('login'))->with('error', 'Unauthorized access.');
+        }
+
+        $validationRules = [
+            'equipment_name'   => 'required|min_length[2]|max_length[100]',
+            'department_id'    => 'required|is_natural_no_zero',
+            'category_id'      => 'required|is_natural_no_zero',
+            'equipment_code'   => 'required|max_length[50]|is_unique[equipment.equipment_code]',
+            'brand'            => 'permit_empty|max_length[100]',
+            'model'            => 'permit_empty|max_length[100]',
+            'serial_number'    => 'permit_empty|max_length[100]|is_unique[equipment.serial_number]',
+            'status'           => 'permit_empty|in_list[AVAILABLE,RESERVED,MAINTENANCE]',
+            'condition_status' => 'permit_empty|in_list[GOOD,FAIR,DAMAGED]',
+            'description'      => 'permit_empty|max_length[1000]',
+            'equipment_image'  => 'permit_empty|is_image[equipment_image]|max_size[equipment_image,5120]',
+        ];
+
+        $validationMessages = [
+            'equipment_name' => [
+                'required' => 'Equipment Name is required.',
+            ],
+            'department_id' => [
+                'required'            => 'Department / Office is required.',
+                'is_natural_no_zero' => 'Please select a valid Department / Office.',
+            ],
+            'category_id' => [
+                'required'            => 'Category is required.',
+                'is_natural_no_zero' => 'Please select a valid Category.',
+            ],
+            'equipment_code' => [
+                'required'  => 'Tracking / Asset Code is required.',
+                'is_unique' => 'This Tracking / Asset Code is already assigned to another item.',
+            ],
+            'serial_number' => [
+                'is_unique' => 'This Serial Number is already registered.',
+            ],
+            'equipment_image' => [
+                'is_image' => 'Uploaded file must be a valid image (JPG, PNG, WebP, SVG).',
+                'max_size' => 'Image file size must not exceed 5MB.',
+            ],
+        ];
+
+        if (! $this->validate($validationRules, $validationMessages)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors())
+                ->with('error', 'Please check the form for errors and try again.')
+                ->with('openAddModal', true);
+        }
+
+        $imageFile = $this->request->getFile('equipment_image');
+        $imageName = null;
+
+        if ($imageFile && $imageFile->isValid() && ! $imageFile->hasMoved()) {
+            $imageName = $imageFile->getRandomName();
+            $targetPath = FCPATH . 'uploads/equipment/';
+            if (! is_dir($targetPath)) {
+                mkdir($targetPath, 0755, true);
+            }
+            $imageFile->move($targetPath, $imageName);
+        }
+
+        $brand = trim((string) $this->request->getPost('brand'));
+        $model = trim((string) $this->request->getPost('model'));
+        $serialNumber = trim((string) $this->request->getPost('serial_number'));
+        $description = trim((string) $this->request->getPost('description'));
+        $status = strtoupper(trim((string) $this->request->getPost('status'))) ?: 'AVAILABLE';
+        $conditionStatus = strtoupper(trim((string) $this->request->getPost('condition_status'))) ?: 'GOOD';
+
+        $data = [
+            'equipment_code'   => trim((string) $this->request->getPost('equipment_code')),
+            'equipment_name'   => trim((string) $this->request->getPost('equipment_name')),
+            'department_id'    => (int) $this->request->getPost('department_id'),
+            'category_id'      => (int) $this->request->getPost('category_id'),
+            'brand'            => $brand !== '' ? $brand : null,
+            'model'            => $model !== '' ? $model : null,
+            'serial_number'    => $serialNumber !== '' ? $serialNumber : null,
+            'status'           => $status,
+            'condition_status' => $conditionStatus,
+            'description'      => $description !== '' ? $description : null,
+            'image'            => $imageName,
+        ];
+
+        $equipmentModel = new EquipmentModel();
+        $equipmentModel->insert($data);
+
+        return redirect()->to(base_url('admin/equipment' . ($data['department_id'] ? '?department_id=' . $data['department_id'] : '')))
+            ->with('success', 'Equipment "' . $data['equipment_name'] . '" added successfully.');
     }
 
     public function dashboard()
