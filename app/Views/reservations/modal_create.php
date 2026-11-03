@@ -39,24 +39,24 @@ $equipmentModel = trim((string) ($equipment['brand'] ?? '') . ' ' . (string) ($e
                     </div>
 
                     <div class="mb-3">
-                        <label for="reservation_date_<?= $equipmentId ?>" class="form-label">Reservation Date <span class="text-danger">*</span></label>
+                        <label for="reservation_date_<?= $equipmentId ?>" class="form-label">Reservation Date</label>
                         <input type="date" class="form-control <?= isset($errors['reservation_date']) ? 'is-invalid' : '' ?>" id="reservation_date_<?= $equipmentId ?>" name="reservation_date" min="<?= date('Y-m-d') ?>" value="<?= esc(old('reservation_date', date('Y-m-d'))) ?>" required>
                         <?php if (isset($errors['reservation_date'])): ?><div class="invalid-feedback"><?= esc($errors['reservation_date']) ?></div><?php endif; ?>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
-                            <label for="start_time_<?= $equipmentId ?>" class="form-label">Start Time <span class="text-danger">*</span></label>
+                            <label for="start_time_<?= $equipmentId ?>" class="form-label">Start Time</label>
                             <input type="time" class="form-control <?= isset($errors['start_time']) ? 'is-invalid' : '' ?>" id="start_time_<?= $equipmentId ?>" name="start_time" value="<?= esc(old('start_time', '09:00')) ?>" required>
                             <?php if (isset($errors['start_time'])): ?><div class="invalid-feedback"><?= esc($errors['start_time']) ?></div><?php endif; ?>
                         </div>
                         <div class="col-sm-6">
-                            <label for="end_time_<?= $equipmentId ?>" class="form-label">End Time <span class="text-danger">*</span></label>
+                            <label for="end_time_<?= $equipmentId ?>" class="form-label">End Time</label>
                             <input type="time" class="form-control <?= isset($errors['end_time']) ? 'is-invalid' : '' ?>" id="end_time_<?= $equipmentId ?>" name="end_time" value="<?= esc(old('end_time', '11:00')) ?>" required>
                             <?php if (isset($errors['end_time'])): ?><div class="invalid-feedback"><?= esc($errors['end_time']) ?></div><?php endif; ?>
                         </div>
                     </div>
                     <div>
-                        <label for="purpose_<?= $equipmentId ?>" class="form-label">Purpose of Reservation <span class="text-danger">*</span></label>
+                        <label for="purpose_<?= $equipmentId ?>" class="form-label">Purpose of Reservation</label>
                         <textarea class="form-control <?= isset($errors['purpose']) ? 'is-invalid' : '' ?>" id="purpose_<?= $equipmentId ?>" name="purpose" rows="3" maxlength="255" placeholder="e.g. Laboratory experiment for CS301 / Class presentation" required><?= esc(old('purpose', '')) ?></textarea>
                         <?php if (isset($errors['purpose'])): ?><div class="invalid-feedback"><?= esc($errors['purpose']) ?></div><?php endif; ?>
                     </div>

@@ -163,9 +163,23 @@ $to = min($currentPage * $perPage, $total);
                             $modelName = trim((string) ($item['brand'] ?? '') . ' ' . (string) ($item['model'] ?? ''));
                         ?>
                         <div class="col">
-                            <article class="catalog-item-card">
-                                <a href="<?= base_url('equipment/' . (int) $item['equipment_id']) ?>" class="catalog-item-image" aria-label="View <?= esc($item['equipment_name']) ?> details"><img src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>" alt="<?= esc($item['equipment_name']) ?>" loading="lazy"></a>
-                                <div class="catalog-item-body">
+                            <article
+                                class="catalog-item-card <?= $status === 'AVAILABLE' ? 'catalog-item-clickable' : '' ?>"
+                                <?php if ($status === 'AVAILABLE'): ?>
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#reservationModal<?= (int) $item['equipment_id'] ?>"
+                                    tabindex="0"
+                                    role="button"
+                                    aria-label="Reserve <?= esc($item['equipment_name']) ?>"
+                                <?php endif; ?>
+                                >
+                                    <div class="catalog-item-image">
+                                        <img
+                                            src="<?= esc(equipment_image_url($item['image'] ?? null)) ?>"
+                                            alt="<?= esc($item['equipment_name']) ?>"
+                                            loading="lazy"
+                                        >
+                                    </div>                                <div class="catalog-item-body">
                                     <span class="catalog-asset-tag"><?= esc($item['equipment_code']) ?></span>
                                     <h2><?= esc($item['equipment_name']) ?></h2>
                                     <p class="catalog-item-model"><?= esc($modelName !== '' ? $modelName : 'Model not specified') ?></p>
