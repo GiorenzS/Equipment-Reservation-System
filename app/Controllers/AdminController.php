@@ -125,7 +125,7 @@ class AdminController extends BaseController
         $validationRules = [
             'equipment_name'   => 'required|min_length[2]|max_length[100]',
             'department_id'    => 'required|is_natural_no_zero',
-            'category_id'      => 'required|is_natural_no_zero',
+            'category'         => 'required|min_length[2]|max_length[100]',
             'equipment_code'   => 'required|max_length[50]|is_unique[equipment.equipment_code]',
             'brand'            => 'permit_empty|max_length[100]',
             'model'            => 'permit_empty|max_length[100]',
@@ -144,9 +144,10 @@ class AdminController extends BaseController
                 'required'            => 'Department / Office is required.',
                 'is_natural_no_zero' => 'Please select a valid Department / Office.',
             ],
-            'category_id' => [
-                'required'            => 'Category is required.',
-                'is_natural_no_zero' => 'Please select a valid Category.',
+            'category' => [
+                'required'   => 'Category is required.',
+                'min_length' => 'Category must be at least 2 characters.',
+                'max_length' => 'Category cannot exceed 100 characters.',
             ],
             'equipment_code' => [
                 'required'  => 'Tracking / Asset Code is required.',
@@ -181,6 +182,21 @@ class AdminController extends BaseController
             $imageFile->move($targetPath, $imageName);
         }
 
+        $categoryName = trim((string) $this->request->getPost('category'));
+        $categoryModel = new CategoryModel();
+        $existingCategory = $categoryModel
+            ->where('LOWER(category_name)', strtolower($categoryName))
+            ->first();
+
+        if ($existingCategory) {
+            $categoryId = (int) $existingCategory['category_id'];
+        } else {
+            $categoryId = (int) $categoryModel->insert([
+                'category_name' => $categoryName,
+                'description'   => null,
+            ]);
+        }
+
         $brand = trim((string) $this->request->getPost('brand'));
         $model = trim((string) $this->request->getPost('model'));
         $serialNumber = trim((string) $this->request->getPost('serial_number'));
@@ -192,7 +208,7 @@ class AdminController extends BaseController
             'equipment_code'   => trim((string) $this->request->getPost('equipment_code')),
             'equipment_name'   => trim((string) $this->request->getPost('equipment_name')),
             'department_id'    => (int) $this->request->getPost('department_id'),
-            'category_id'      => (int) $this->request->getPost('category_id'),
+            'category_id'      => $categoryId,
             'brand'            => $brand !== '' ? $brand : null,
             'model'            => $model !== '' ? $model : null,
             'serial_number'    => $serialNumber !== '' ? $serialNumber : null,

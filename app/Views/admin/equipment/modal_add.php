@@ -9,7 +9,7 @@
 $formErrors = session()->getFlashdata('errors') ?? [];
 $hasErrors = ! empty($formErrors);
 $selectedDept = old('department_id', $selectedDepartmentId ?? '');
-$selectedCategory = old('category_id', '');
+$categoryValue = old('category', '');
 $selectedStatus = old('status', 'AVAILABLE');
 $selectedCondition = old('condition_status', 'GOOD');
 $codeValue = old('equipment_code', $suggestedAssetCode ?? 'EQ-CPC-001');
@@ -65,17 +65,15 @@ $codeValue = old('equipment_code', $suggestedAssetCode ?? 'EQ-CPC-001');
                         </div>
 
                         <div class="col-md-6">
-                            <label for="eq_category" class="form-label admin-form-label">Category <span class="text-danger"></span></label>
-                            <select class="form-select admin-form-select <?= isset($formErrors['category_id']) ? 'is-invalid' : '' ?>" id="eq_category" name="category_id" required>
-                                <option value="">Select Category</option>
+                            <label for="eq_category" class="form-label admin-form-label">Category <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control admin-form-control <?= isset($formErrors['category']) ? 'is-invalid' : '' ?>" id="eq_category" name="category" value="<?= esc($categoryValue) ?>" placeholder="Cameras & Video" list="categoryOptions" required>
+                            <datalist id="categoryOptions">
                                 <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= (int) $cat['category_id'] ?>" <?= (int) $selectedCategory === (int) $cat['category_id'] ? 'selected' : '' ?>>
-                                        <?= esc($cat['category_name']) ?>
-                                    </option>
+                                    <option value="<?= esc($cat['category_name']) ?>"></option>
                                 <?php endforeach; ?>
-                            </select>
-                            <?php if (isset($formErrors['category_id'])): ?>
-                                <div class="invalid-feedback"><?= esc($formErrors['category_id']) ?></div>
+                            </datalist>
+                            <?php if (isset($formErrors['category'])): ?>
+                                <div class="invalid-feedback"><?= esc($formErrors['category']) ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
