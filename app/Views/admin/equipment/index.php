@@ -186,14 +186,14 @@ $to = min($currentPage * $perPage, $total);
                             $categoryName = (string) ($item['category_name'] ?? 'Uncategorized');
                             $catLower = strtolower($categoryName);
 
-                            [$catClass, $catIcon] = match (true) {
-                                str_contains($catLower, 'computer') || str_contains($catLower, 'laptop') => ['cat-computers', 'bi-pc-display'],
-                                str_contains($catLower, 'av') || str_contains($catLower, 'projector') => ['cat-av', 'bi-projector'],
-                                str_contains($catLower, 'photo') || str_contains($catLower, 'camera') => ['cat-photo', 'bi-camera-fill'],
-                                str_contains($catLower, 'audio') || str_contains($catLower, 'sound') || str_contains($catLower, 'mic') => ['cat-audio', 'bi-mic-fill'],
-                                str_contains($catLower, 'tool') || str_contains($catLower, 'drill') => ['cat-tools', 'bi-tools'],
-                                str_contains($catLower, 'office') || str_contains($catLower, 'print') => ['cat-office', 'bi-printer-fill'],
-                                default => ['cat-default', 'bi-box-seam'],
+                            $catClass = match (true) {
+                                str_contains($catLower, 'computer') || str_contains($catLower, 'laptop') => 'cat-computers',
+                                str_contains($catLower, 'av') || str_contains($catLower, 'projector') => 'cat-av',
+                                str_contains($catLower, 'photo') || str_contains($catLower, 'camera') => 'cat-photo',
+                                str_contains($catLower, 'audio') || str_contains($catLower, 'sound') || str_contains($catLower, 'mic') => 'cat-audio',
+                                str_contains($catLower, 'tool') || str_contains($catLower, 'drill') => 'cat-tools',
+                                str_contains($catLower, 'office') || str_contains($catLower, 'print') => 'cat-office',
+                                default => 'cat-default',
                             };
 
                             $statusClass = match ($status) {
@@ -242,10 +242,7 @@ $to = min($currentPage * $perPage, $total);
                                     <span class="catalog-asset-tag"><?= esc($item['equipment_code']) ?></span>
                                     <h2><?= esc($item['equipment_name']) ?></h2>
                                     <p class="catalog-item-model"><?= esc($modelName !== '' ? $modelName : 'Model not specified') ?></p>
-                                    <span class="cat-badge <?= esc($catClass) ?>">
-                                        <i class="bi <?= esc($catIcon) ?>" aria-hidden="true"></i>
-                                        <?= esc($categoryName) ?>
-                                    </span>
+                                    <span class="cat-badge <?= esc($catClass) ?>"><?= esc($categoryName) ?></span>
                                     <div class="admin-card-footer">
                                         <div class="admin-card-state">
                                             <span class="admin-card-indicator <?= esc($statusClass) ?>">

@@ -130,13 +130,14 @@ $to = min($currentPage * $perPage, $total);
                             $condition = strtoupper((string) ($item['condition_status'] ?? 'GOOD'));
                             $categoryName = (string) ($item['category_name'] ?? 'Uncategorized');
                             $categoryLower = strtolower($categoryName);
-                            $categoryIcon = match (true) {
-                                str_contains($categoryLower, 'computer') => 'bi-pc-display',
-                                str_contains($categoryLower, 'av') => 'bi-projector',
-                                str_contains($categoryLower, 'photo') => 'bi-camera-fill',
-                                str_contains($categoryLower, 'audio') => 'bi-mic-fill',
-                                str_contains($categoryLower, 'tool') => 'bi-tools',
-                                default => 'bi-box-seam',
+                            $catClass = match (true) {
+                                str_contains($categoryLower, 'computer') || str_contains($categoryLower, 'laptop') => 'cat-computers',
+                                str_contains($categoryLower, 'av') || str_contains($categoryLower, 'projector') => 'cat-av',
+                                str_contains($categoryLower, 'photo') || str_contains($categoryLower, 'camera') => 'cat-photo',
+                                str_contains($categoryLower, 'audio') || str_contains($categoryLower, 'sound') || str_contains($categoryLower, 'mic') => 'cat-audio',
+                                str_contains($categoryLower, 'tool') || str_contains($categoryLower, 'drill') => 'cat-tools',
+                                str_contains($categoryLower, 'office') || str_contains($categoryLower, 'print') => 'cat-office',
+                                default => 'cat-default',
                             };
                             $statusClass = match ($status) {
                                 'AVAILABLE' => 'item-status-available', 'RESERVED' => 'item-status-reserved', 'IN_USE' => 'item-status-in-use', default => 'item-status-other',
@@ -153,7 +154,7 @@ $to = min($currentPage * $perPage, $total);
                                     <span class="catalog-asset-tag"><?= esc($item['equipment_code']) ?></span>
                                     <h2><?= esc($item['equipment_name']) ?></h2>
                                     <p class="catalog-item-model"><?= esc($modelName !== '' ? $modelName : 'Model not specified') ?></p>
-                                    <span class="catalog-category"><i class="bi <?= esc($categoryIcon) ?>" aria-hidden="true"></i><?= esc($categoryName) ?></span>
+                                    <span class="cat-badge <?= esc($catClass) ?>"><?= esc($categoryName) ?></span>
                                     <div class="catalog-item-footer">
                                         <div class="catalog-item-state"><span class="catalog-item-status <?= $statusClass ?>"><i></i><?= esc(ucwords(strtolower(str_replace('_', ' ', $status)))) ?></span><span class="catalog-item-condition <?= $conditionClass ?>"><i></i><?= esc(ucwords(strtolower($condition))) ?></span></div>
                                         <?php if ($status === 'AVAILABLE'): ?>
