@@ -6,43 +6,6 @@
     <title>Equipment List - Equipment Reservation Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-            background-color: #f8fafc;
-            font-family: system-ui, -apple-system, sans-serif;
-            color: #1e293b;
-        }
-        .navbar-custom {
-            background: #0f172a;
-        }
-        .card {
-            border: 0;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        .table > :not(caption) > * > * {
-            padding: 0.85rem 1rem;
-            vertical-align: middle;
-        }
-        .equipment-thumbnail {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-            background: #0f172a;
-            border: 1px solid #e2e8f0;
-            display: block;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .equipment-thumb-link {
-            display: inline-block;
-            text-decoration: none;
-        }
-        .equipment-thumb-link:hover .equipment-thumbnail {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-        }
-    </style>
 </head>
 <body>
     <!-- Top Navigation -->

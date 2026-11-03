@@ -78,17 +78,32 @@ $to = min($currentPage * $perPage, $total);
                     <?php endforeach; ?>
                 </ul>
             </div>
+            
             <div class="dropdown">
-                <button class="catalog-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="catalog-avatar"><?= esc(strtoupper(substr($userName ?: 'A', 0, 1))) ?></span>
-                    <span class="catalog-profile-copy"><strong class="catalog-profile-name"><?= esc($userName ?: 'Admin') ?></strong><small><?= esc($userRole) ?></small></span>
+                <button class="catalog-profile dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="catalog-avatar">
+                        <?= esc(strtoupper(substr($userName ?: 'U', 0, 1))) ?>
+                    </span>
+                    <span class="catalog-profile-name">
+                        <?= esc($userName ?: 'User') ?>
+                    </span>
                 </button>
+
                 <ul class="dropdown-menu dropdown-menu-end catalog-profile-menu">
-                    <li><span class="dropdown-item-text"><?= esc($userRole) ?></span></li>
+                    <li>
+                        <span class="dropdown-item-text"><?= esc($userRole) ?></span>
+                    </li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Logout</a></li>
+                    <li>
+                        <a class="dropdown-item" href="<?= base_url('logout') ?>">
+                            <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
+                            Logout
+                        </a>
+                    </li>
                 </ul>
             </div>
+
         </header>
 
         <?php if (session()->getFlashdata('success')): ?>
