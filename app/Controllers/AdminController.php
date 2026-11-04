@@ -493,7 +493,7 @@ class AdminController extends BaseController
                     ->where('borrow_transactions.expected_return_date <', $now)
                 ->groupEnd()
                 ->orGroupStart()
-                    ->where('borrow_transactions.status', 'RETURNED')
+                    ->whereIn('borrow_transactions.status', ['RETURNED', 'CHECKED_IN'])
                     ->where('borrow_transactions.actual_return_date > borrow_transactions.expected_return_date', null, false)
                 ->groupEnd()
                 ->groupEnd();
@@ -660,9 +660,13 @@ class AdminController extends BaseController
             ->findAll();
 
         $returnedHistory = $txQuery()
-            ->where('borrow_transactions.status', 'RETURNED')
+            ->whereIn('borrow_transactions.status', ['RETURNED', 'CHECKED_IN'])
             ->orderBy('borrow_transactions.actual_return_date', 'DESC')
             ->findAll(10);
+
+        $returnedCount = $txQuery()
+            ->whereIn('borrow_transactions.status', ['RETURNED', 'CHECKED_IN'])
+            ->countAllResults();
 
         $overdueTransactions = $txQuery()
             ->where('borrow_transactions.status', 'CHECKED_OUT')
@@ -674,7 +678,7 @@ class AdminController extends BaseController
             'pending'  => count($reservations),
             'checkout' => count($approvedReservations),
             'active'   => count($transactions),
-            'returned' => count($returnedHistory),
+            'returned' => $returnedCount,
             'overdue'  => count($overdueTransactions),
         ];
 
@@ -798,7 +802,7 @@ class AdminController extends BaseController
             }
         }
 
-        if (! $reservation || ! in_array(strtoupper((string) $reservation['status']), ['APPROVED', 'CHECKED_OUT'], true)) {
+        if ($reservation && ! in_array(strtoupper((string) $reservation['status']), ['APPROVED', 'CHECKED_OUT'], true)) {
             return redirect()->to('admin/transactions')->with('error', 'The reservation linked to this checkout could not be verified.');
         }
 
@@ -811,7 +815,7 @@ class AdminController extends BaseController
             'returned_at'  => $now,
         ]);
         $transactionUpdated = $transactionModel->update($transactionId, [
-            'reservation_id'     => (int) $reservation['reservation_id'],
+            'reservation_id'     => $reservation ? (int) $reservation['reservation_id'] : null,
             'actual_return_date' => $now,
             'status'             => 'RETURNED',
         ]);
@@ -819,7 +823,10 @@ class AdminController extends BaseController
             'status'           => 'AVAILABLE',
             'condition_status' => $this->request->getPost('condition_in'),
         ]);
-        $reservationUpdated = $reservationModel->update($reservation['reservation_id'], ['status' => 'RETURNED']);
+        $reservationUpdated = true;
+        if ($reservation) {
+            $reservationUpdated = (bool) $reservationModel->update($reservation['reservation_id'], ['status' => 'RETURNED']);
+        }
 
         if (! $itemUpdated || ! $transactionUpdated || ! $equipmentUpdated || ! $reservationUpdated || ! $db->transStatus()) {
             $db->transRollback();
@@ -827,6 +834,6 @@ class AdminController extends BaseController
         }
 
         $db->transCommit();
-        return redirect()->to('admin/transactions')->with('success', 'Equipment return recorded.');
+        return redirect()->to('admin/transactions?queue=returned')->with('success', 'Equipment return recorded.');
     }
 }

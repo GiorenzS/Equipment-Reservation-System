@@ -566,7 +566,6 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                                 $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
                                 $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
                                 $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
-                                $overdueAgo = ! empty($tx['expected_return_date']) ? human_date(date('Y-m-d H:i:s', strtotime($tx['expected_return_date']))) : '';
                             ?>
                             <tr>
                                 <td>
