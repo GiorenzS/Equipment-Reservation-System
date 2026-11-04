@@ -218,16 +218,13 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                         <?php else: foreach ($reservations as $res): ?>
                             <?php
                                 $requesterName = trim((string) ($res['first_name'] ?? '') . ' ' . (string) ($res['last_name'] ?? '')) ?: (string) $res['id_number'];
-                                $requesterRole = strtoupper((string) ($res['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
-                                $initial = strtoupper(substr($res['first_name'] ?? $res['id_number'] ?? 'U', 0, 1));
                             ?>
                             <tr>
                                 <td>
                                     <div class="admin-user-cell">
-                                        <span class="admin-user-avatar"><?= esc($initial) ?></span>
                                         <div class="admin-user-info">
                                             <strong><?= esc($requesterName) ?></strong>
-                                            <small><?= esc($requesterRole) ?> · ID <?= esc($res['id_number']) ?></small>
+                                            <small><?= esc($res['id_number']) ?></small>
                                         </div>
                                     </div>
                                 </td>
@@ -304,17 +301,14 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                         <?php else: foreach ($approvedReservations as $res): ?>
                             <?php
                                 $requesterName = trim((string) ($res['first_name'] ?? '') . ' ' . (string) ($res['last_name'] ?? '')) ?: (string) $res['id_number'];
-                                $requesterRole = strtoupper((string) ($res['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
-                                $initial = strtoupper(substr($res['first_name'] ?? $res['id_number'] ?? 'U', 0, 1));
                                 $isAvailable = strtoupper((string) ($res['equipment_status'] ?? '')) === 'AVAILABLE';
                             ?>
                             <tr>
                                 <td>
                                     <div class="admin-user-cell">
-                                        <span class="admin-user-avatar"><?= esc($initial) ?></span>
                                         <div class="admin-user-info">
                                             <strong><?= esc($requesterName) ?></strong>
-                                            <small><?= esc($requesterRole) ?> · ID <?= esc($res['id_number']) ?></small>
+                                            <small><?= esc($res['id_number']) ?></small>
                                         </div>
                                     </div>
                                 </td>
@@ -392,17 +386,14 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                         <?php else: foreach ($transactions as $tx): ?>
                             <?php
                                 $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
-                                $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
-                                $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
                                 $isOverdue = ! empty($tx['expected_return_date']) && strtotime($tx['expected_return_date']) < strtotime($now);
                             ?>
                             <tr>
                                 <td>
                                     <div class="admin-user-cell">
-                                        <span class="admin-user-avatar"><?= esc($initial) ?></span>
                                         <div class="admin-user-info">
                                             <strong><?= esc($borrowerName) ?></strong>
-                                            <small><?= esc($borrowerRole) ?> · ID <?= esc($tx['id_number']) ?></small>
+                                            <small><?= esc($tx['id_number']) ?></small>
                                         </div>
                                     </div>
                                 </td>
@@ -480,16 +471,13 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                         <?php else: foreach ($overdueTransactions as $tx): ?>
                             <?php
                                 $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
-                                $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
-                                $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
                             ?>
                             <tr class="table-danger-row">
                                 <td>
                                     <div class="admin-user-cell">
-                                        <span class="admin-user-avatar avatar-danger"><?= esc($initial) ?></span>
                                         <div class="admin-user-info">
                                             <strong><?= esc($borrowerName) ?></strong>
-                                            <small><?= esc($borrowerRole) ?> · ID <?= esc($tx['id_number']) ?></small>
+                                            <small><?= esc($tx['id_number']) ?></small>
                                         </div>
                                     </div>
                                 </td>
@@ -564,16 +552,13 @@ if (!in_array($selectedQueue, $allowedQueues, true)) {
                         <?php else: foreach ($returnedHistory as $tx): ?>
                             <?php
                                 $borrowerName = trim((string) ($tx['first_name'] ?? '') . ' ' . (string) ($tx['last_name'] ?? '')) ?: (string) $tx['id_number'];
-                                $borrowerRole = strtoupper((string) ($tx['requester_role'] ?? '')) === 'STAFF' ? 'Faculty / Staff' : 'Student';
-                                $initial = strtoupper(substr($tx['first_name'] ?? $tx['id_number'] ?? 'U', 0, 1));
                             ?>
                             <tr>
                                 <td>
                                     <div class="admin-user-cell">
-                                        <span class="admin-user-avatar"><?= esc($initial) ?></span>
                                         <div class="admin-user-info">
                                             <strong><?= esc($borrowerName) ?></strong>
-                                            <small><?= esc($borrowerRole) ?> · ID <?= esc($tx['id_number']) ?></small>
+                                            <small><?= esc($tx['id_number']) ?></small>
                                         </div>
                                     </div>
                                 </td>
